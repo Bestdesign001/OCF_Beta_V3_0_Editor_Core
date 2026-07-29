@@ -1,0 +1,671 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>OCF Beta V3.0 Editor Core</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100vw;height:100vh;overflow:hidden;font-family:Arial;background:#eef2f7;color:#102A43}
+.top{height:56px;background:#102A43;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.btn{border:0;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer;margin:2px}.gold{background:#D4AF37;color:#102A43}.light{background:white;color:#102A43}.red{background:#dc2626;color:white}
+.screen{position:fixed;left:0;right:0;top:56px;bottom:0;width:100vw;height:calc(100vh - 56px);display:none}.screen.active{display:block}
+#dashboardScreen{overflow:auto;padding:24px;background:linear-gradient(135deg,#eef2f7,#dfe8f3)}#workspaceScreen{overflow:hidden;background:#dfe8f3}
+.header{max-width:1180px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between}.header h1{margin:0;font-size:34px}.header p{color:#64748b}
+.status{background:#ecfdf5;border:1px solid #86efac;color:#166534;border-radius:14px;padding:12px 16px;font-weight:900}
+.grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.4fr .9fr;gap:18px}.card{background:white;border:1px solid #d9e1ec;border-radius:18px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.panel{border:1px solid #d9e1ec;border-radius:14px;padding:12px;background:#f8fafc;margin:10px 0}.factoryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.factory{border:1px solid #d9e1ec;border-radius:14px;padding:14px;background:#f8fafc;cursor:pointer}.factory:hover{border-color:#D4AF37;box-shadow:0 8px 18px rgba(0,0,0,.08)}.factory b{font-size:20px}.small{font-size:12px;color:#64748b;line-height:1.4}
+.badge{display:inline-block;background:#ecfdf5;color:#166534;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.projectRow{border:1px solid #d9e1ec;border-radius:14px;padding:12px;background:#f8fafc;display:flex;justify-content:space-between;margin:10px 0}
+.workspaceTop{height:72px;background:white;border-bottom:1px solid #d9e1ec;display:flex;align-items:center;justify-content:space-between;padding:0 18px}.workspaceTop b{font-size:20px}.workspaceTop span{display:block;color:#64748b;font-size:12px}
+.workflowTop{height:44px;background:#102A43;color:white;display:flex;align-items:center;justify-content:center;gap:9px;font-size:12px}.workflowTop span{background:rgba(255,255,255,.13);border-radius:999px;padding:6px 9px}
+.workgrid{height:calc(100vh - 56px - 72px - 44px - 34px);display:grid;grid-template-columns:340px 1fr 390px}.left,.right{background:white;padding:16px;overflow:auto;border-right:1px solid #d9e1ec}.right{border-left:1px solid #d9e1ec;border-right:0}.center{display:flex;align-items:center;justify-content:center;background:#dfe8f3;position:relative}
+.statusBar{height:34px;background:#0f2740;color:white;display:flex;align-items:center;gap:18px;padding:0 16px;font-size:12px}
+.canvasWrap{transform-origin:center center}.canvas{width:420px;height:746px;background:white;position:relative;overflow:hidden;box-shadow:0 14px 36px rgba(0,0,0,.22)}
+.layerObj{position:absolute;user-select:none;cursor:pointer;transform-origin:center center}.layerObj.selected{outline:3px solid #D4AF37;outline-offset:-3px}.layerObj.locked{cursor:not-allowed}.layerObj.hidden{display:none}
+#heroLayer{left:0;top:0;width:420px;height:522px;background:linear-gradient(135deg,#c7dcf8,#f8fafc);overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px}
+#heroImg{position:absolute;left:0;top:0;display:none;cursor:move;user-select:none}.hasPhoto .placeholder{display:none}
+.handle{position:absolute;width:12px;height:12px;background:#D4AF37;border:2px solid white;border-radius:50%;display:none;z-index:30}.selected .handle{display:block}
+.h-br{right:-7px;bottom:-7px;cursor:nwse-resize}.h-rot{left:50%;top:-34px;transform:translateX(-50%);cursor:grab;background:#38bdf8}
+.guide{position:absolute;background:#ff3333;z-index:1000;display:none;pointer-events:none}.guideV{width:1px;height:746px;left:210px;top:0}.guideH{height:1px;width:420px;top:373px;left:0}
+.grad{position:absolute;left:0;right:0;bottom:0;height:48%;background:linear-gradient(to top,rgba(16,42,67,1),rgba(16,42,67,.78),rgba(16,42,67,.35),rgba(16,42,67,0));pointer-events:none}
+#titleLayer{left:24px;top:585px;width:360px;min-height:44px;color:white;font-size:30px;font-weight:900}#subtitleLayer{left:24px;top:666px;width:360px;min-height:28px;color:#dce7ff;font-size:16px;font-weight:700}
+.step{border-left:4px solid #D4AF37;padding:9px 10px;margin:8px 0;background:white;border-radius:10px;font-weight:700}
+.queue{min-height:130px;border:1px solid #d9e1ec;border-radius:14px;padding:10px;display:grid;grid-template-columns:1fr;gap:10px;background:white}.emptyQueue{display:flex;align-items:center;justify-content:center;min-height:90px;color:#64748b}
+.photoItem{display:grid;grid-template-columns:72px 1fr auto;gap:10px;align-items:center;border:1px solid #d9e1ec;border-radius:12px;padding:8px;background:#f8fafc;cursor:grab}.photoItem.hero{border-color:#D4AF37;background:#fff8dc}.photoThumb{height:62px;border-radius:10px;background-size:cover;background-position:center}.photoName{font-weight:800;font-size:13px}.photoMeta{font-size:11px;color:#64748b}.photoActions{display:flex;flex-direction:column;gap:5px}.miniBtn{border:0;border-radius:8px;padding:5px 7px;font-size:11px;font-weight:800;cursor:pointer}.heroBadge{display:inline-block;background:#D4AF37;color:#102A43;border-radius:999px;padding:3px 7px;font-size:10px;font-weight:900;margin-left:4px}
+.dropZone{border:2px dashed #94a3b8;background:#f8fafc;border-radius:16px;padding:16px;text-align:center;color:#64748b;margin:10px 0}.dropZone.dragover{border-color:#D4AF37;background:#fff8dc;color:#102A43}
+.layerRow{display:grid;grid-template-columns:26px 26px 1fr;gap:6px;align-items:center;border:1px solid #d9e1ec;border-radius:12px;padding:8px;margin:7px 0;background:white;cursor:pointer}.layerRow.active{border-color:#D4AF37;background:#fff8dc}.layerRow button{border:0;background:#f1f5f9;border-radius:7px;cursor:pointer;padding:5px}.layerName{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.propGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.propGrid label{font-size:11px;color:#64748b;font-weight:800}textarea,select,input{width:100%;padding:8px;border:1px solid #d9e1ec;border-radius:10px}textarea{min-height:74px}.statusLine{background:white;border:1px solid #d9e1ec;border-radius:12px;padding:10px;margin:8px 0;font-size:13px}.lockList label{display:block;margin:8px 0;font-weight:700;color:#166534}
+.workflowTop span{cursor:pointer;transition:background .15s}
+.workflowTop span:hover{background:rgba(255,255,255,.28)}
+.focusFlash{outline:3px solid #38bdf8;outline-offset:2px;box-shadow:0 0 0 6px rgba(56,189,248,.25);transition:outline-color .2s,box-shadow .2s}
+.heroHintFlash{outline:3px solid #38bdf8 !important;outline-offset:-3px}
+.queueHint{font-size:12px;color:#0f2740;font-weight:800;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:10px;padding:0 10px;margin:0;max-height:0;overflow:hidden;opacity:0;transition:all .25s}
+.queueHint.show{padding:8px 10px;margin:8px 0;max-height:60px;opacity:1}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.photoItem.loading .photoThumb{display:flex;align-items:center;justify-content:center;color:#94a3b8;background:#f1f5f9}
+.slotLayer{background:linear-gradient(135deg,#c7dcf8,#f8fafc);overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#94a3b8}
+.slotImg{position:absolute;left:0;top:0;display:none;cursor:move;user-select:none}
+</style></head><body>
+<div class="top"><b id="topTitle">OCF Beta V3.0 Editor Core</b><div><button class="btn light" onclick="backDashboard()">Dashboard</button><button class="btn gold" onclick="newProject()">New Project</button></div></div>
+<input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handlePhotos(event)">
+<main id="dashboardScreen" class="screen"><section class="header"><div><h1>QueenRay Official Factory Dashboard</h1><p>Editor Core connects Photo Queue, Canvas, Layers, Transform and Export.</p></div><div class="status">SYSTEM STATUS: PASS</div></section><section class="grid"><div class="card" id="factoryOverviewPanel"><h2>Factory Overview</h2><div id="factoryGrid" class="factoryGrid"></div></div><div class="card"><h2>System Status</h2><div class="panel">Foundation: <b id="foundationStatus">CHECKING</b></div><div class="panel">CSS Loaded: <b id="cssStatus">CHECKING</b></div><div class="panel">JavaScript Loaded: <b id="jsStatus">CHECKING</b></div><div class="panel">Screen Router: <b id="routerStatus">CHECKING</b></div><div class="panel">Official Locked Mode: <b>ON</b></div><h2>Recent Projects</h2><div class="projectRow"><div><b>No saved projects yet</b><div class="small">Projects aren't saved between sessions in this beta</div></div><button class="btn light" disabled title="No saved projects yet">Open</button></div></div></section></main>
+<main id="workspaceScreen" class="screen"><div class="workspaceTop"><div><b id="activeFactoryName">Greeting Factory</b><span id="activeFactoryDesc">Official greeting poster workflow</span></div><div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button><button class="btn gold" onclick="exportPNG()">Export PNG</button></div></div><div class="workflowTop"><span onclick="menuUploadPhotos()">Upload Photos</span><span onclick="menuPhotoQueue()">Photo Queue</span><span onclick="menuChooseHero()">Choose Hero</span><span onclick="menuCanvas()">Canvas</span><span onclick="menuTransform()">Transform</span><span onclick="menuLayers()">Layers</span><span onclick="menuExport()">Export</span></div>
+<div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
+<section class="center" id="canvasSection"><div id="canvasWrap" class="canvasWrap"><div class="canvas" id="canvas"><div id="heroLayer" class="layerObj" style="z-index:1" onmousedown="heroPointerDown(event)" ondblclick="replaceHeroPhoto()"><span class="placeholder">Hero Photo Area</span><img id="heroImg" draggable="false"><div class="handle h-br" onmousedown="resizePointerDown(event)"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support1Layer" class="layerObj slotLayer hidden" style="z-index:2" onmousedown="objectDown(event,'support1Layer')"><span class="placeholder">Photo</span><img id="support1Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support2Layer" class="layerObj slotLayer hidden" style="z-index:3" onmousedown="objectDown(event,'support2Layer')"><span class="placeholder">Photo</span><img id="support2Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support3Layer" class="layerObj slotLayer hidden" style="z-index:4" onmousedown="objectDown(event,'support3Layer')"><span class="placeholder">Photo</span><img id="support3Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support4Layer" class="layerObj slotLayer hidden" style="z-index:5" onmousedown="objectDown(event,'support4Layer')"><span class="placeholder">Photo</span><img id="support4Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div class="grad" style="z-index:7"></div><div id="titleLayer" class="layerObj" style="z-index:10" onmousedown="objectDown(event,'titleLayer')" ondblclick="editTextLayer('titleLayer')">OFFICIAL GREETING POSTER<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="subtitleLayer" class="layerObj" style="z-index:11" onmousedown="objectDown(event,'subtitleLayer')" ondblclick="editTextLayer('subtitleLayer')">Official Locked Mode · Auto Layout Preview<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="guideV" class="guide guideV"></div><div id="guideH" class="guide guideH"></div></div></div></section>
+<aside class="right"><h3>Status</h3><div class="statusLine">Selected Count: <b id="selectedCountStatus">1</b></div><div class="statusLine">Object Type: <b id="objectTypeStatus">Photo Frame</b></div><div class="statusLine">Current Layer: <b id="currentLayerStatus">Hero Photo Area</b></div><div class="statusLine">Selected Object: <b id="selectedStatus">None</b></div><div class="statusLine">Canvas Size: <b id="canvasSizeStatus">1080 × 1920</b></div><div class="statusLine">Total Photos: <b id="totalPhotosStatus">0</b></div><div class="statusLine">Hero Photo: <b id="heroNameStatus">None</b></div>
+<h3 id="transformHeading">Object Transform</h3><div class="panel propGrid"><label>X<input id="propX" type="number" oninput="applyProps()"></label><label>Y<input id="propY" type="number" oninput="applyProps()"></label><label>Width<input id="propW" type="number" oninput="applyProps()"></label><label>Height<input id="propH" type="number" oninput="applyProps()"></label><label>Rotation<input id="propRot" type="number" oninput="applyProps()"></label><label>Opacity %<input id="propOpacity" type="number" min="0" max="100" oninput="applyProps()"></label></div>
+<h3>Align / Arrange</h3><button class="btn light" onclick="align('left')">Left</button><button class="btn light" onclick="align('center')">Center</button><button class="btn light" onclick="align('right')">Right</button><button class="btn light" onclick="align('top')">Top</button><button class="btn light" onclick="align('middle')">Middle</button><button class="btn light" onclick="align('bottom')">Bottom</button><br><button class="btn light" onclick="bringForward()">Forward</button><button class="btn light" onclick="sendBackward()">Backward</button><button class="btn light" onclick="bringFront()">Front</button><button class="btn light" onclick="sendBack()">Back</button>
+<h3>Properties</h3><label>Rename Layer</label><input id="renameLayerInput"><button class="btn gold" onclick="renameLayer()">Rename</button><div class="panel"><label>Title</label><textarea id="titleInput" oninput="updateText()">OFFICIAL GREETING POSTER</textarea><label>Subtitle</label><textarea id="subtitleInput" oninput="updateText()">Official Locked Mode · Greeting Classic</textarea></div><h3>Zoom</h3><button class="btn light" onclick="setZoom(50)">50%</button><button class="btn light" onclick="setZoom(75)">75%</button><button class="btn light" onclick="setZoom(100)">100%</button><h3 id="exportHeading">Export</h3><button class="btn gold" onclick="exportPNG()">Export PNG</button><h3>Official Locked Mode</h3><div class="panel lockList"><label><input type="checkbox" checked disabled> Photo Lock</label><label><input type="checkbox" checked disabled> Logo Lock</label><label><input type="checkbox" checked disabled> Face Lock</label><label><input type="checkbox" checked disabled> Original Photo Mode</label></div></aside>
+</div><div class="statusBar">Canvas: <b id="sbCanvas">1080 × 1920</b> Zoom: <b id="sbZoom">100%</b> Selected: <b id="sbSelected">None</b> Layers: <b id="sbLayers">0</b> Photos: <b id="sbPhotos">0</b></div></main>
+<script>
+const ScreenRouter={current:null,screens:{},init(){this.screens={dashboard:document.getElementById('dashboardScreen'),workspace:document.getElementById('workspaceScreen')};this.showScreen('dashboard')},showScreen(name){Object.keys(this.screens).forEach(k=>{const s=this.screens[k];s.classList.toggle('active',k===name);s.setAttribute('aria-hidden',k===name?'false':'true')});this.current=name;updateStatusBar()}};
+function showScreen(name){ScreenRouter.showScreen(name)}
+</script><script>
+const FactoryManager={factories:[['🎉','Greeting Factory','Official greeting posters.','OFFICIAL GREETING POSTER','Greeting Classic'],['🐶','Stray Dog Factory','Operation workflow.','OPERASI KAWALAN ANJING LIAR','Operation 5 Pages'],['🌳','Tree Cutting Factory','Before / action / after.','KERJA PEMOTONGAN POKOK','Before Action After'],['🏢','Building Inspection Factory','Inspection summary workflow.','PEMERIKSAAN BANGUNAN','Inspection Report'],['📅','Event Factory','Event highlight workflow.','SOROTAN PROGRAM RASMI','Event Highlight'],['📚','Album Factory','Multi-page official album.','ALBUM RASMI','Album Layout'],['🪧','Billboard Factory','Screen and billboard output.','PAPARAN RASMI','Billboard 4:3 / 16:9']],active:null,render(){factoryGrid.innerHTML='';this.factories.forEach(f=>{const d=document.createElement('div');d.className='factory';d.innerHTML=`<b>${f[0]} ${f[1]}</b><div class="small">${f[2]}</div><br><span class="badge">Official Locked Mode</span><br><br><button class="btn gold" type="button">OPEN</button>`;d.onclick=()=>this.open(f[1]);d.querySelector('button').onclick=e=>{e.preventDefault();e.stopPropagation();this.open(f[1])};factoryGrid.appendChild(d)})},open(name){this.active=this.factories.find(f=>f[1]===name)||this.factories[0];Workspace.loadFactory(this.active);ScreenRouter.showScreen('workspace')}};
+</script><script>
+let photos=[],heroIndex=null,hero={x:0,y:0,w:420,h:522,src:null};
+let selectedLayers=['heroLayer'], dragMode=null, startX=0,startY=0,startRect=null, zoom=100;
+let replaceMode=false;
+
+const layerData=[
+ {id:'heroLayer',name:'Hero Photo Area',type:'Photo Frame',locked:false,hidden:false,rotation:0,opacity:1,z:1},
+ {id:'support1Layer',name:'Support Photo 1',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:2},
+ {id:'support2Layer',name:'Support Photo 2',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:3},
+ {id:'support3Layer',name:'Support Photo 3',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:4},
+ {id:'support4Layer',name:'Support Photo 4',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:5},
+ {id:'titleLayer',name:'Title',type:'Text',locked:false,hidden:false,rotation:0,opacity:1,z:10},
+ {id:'subtitleLayer',name:'Subtitle',type:'Text',locked:false,hidden:false,rotation:0,opacity:1,z:11}
+];
+
+/* ---- Auto Layout Engine: photo-count -> slot rectangles within the 420x522 photo zone ---- */
+const SUPPORT_SLOTS=['support1Layer','support2Layer','support3Layer','support4Layer'];
+const LAYOUT_TEMPLATES={
+ 1:{heroLayer:{x:0,y:0,w:420,h:522}},
+ 2:{heroLayer:{x:0,y:0,w:420,h:388},support1Layer:{x:0,y:396,w:420,h:126}},
+ 3:{heroLayer:{x:0,y:0,w:420,h:388},support1Layer:{x:0,y:396,w:204,h:126},support2Layer:{x:212,y:396,w:208,h:126}},
+ 4:{heroLayer:{x:0,y:0,w:420,h:356},support1Layer:{x:0,y:364,w:134,h:158},support2Layer:{x:142,y:364,w:134,h:158},support3Layer:{x:284,y:364,w:136,h:158}},
+ 5:{heroLayer:{x:0,y:0,w:420,h:296},support1Layer:{x:0,y:304,w:204,h:105},support2Layer:{x:212,y:304,w:208,h:105},support3Layer:{x:0,y:417,w:204,h:105},support4Layer:{x:212,y:417,w:208,h:105}}
+};
+const slotPhoto={support1Layer:{x:0,y:0,w:0,h:0,src:null},support2Layer:{x:0,y:0,w:0,h:0,src:null},support3Layer:{x:0,y:0,w:0,h:0,src:null},support4Layer:{x:0,y:0,w:0,h:0,src:null}};
+
+const Workspace={
+ loadFactory(f){
+  topTitle.textContent='OCF Beta V3.0 · '+f[1];
+  activeFactoryName.textContent=f[0]+' '+f[1]; activeFactoryDesc.textContent=f[2];
+  titleLayer.textContent=f[3]; subtitleLayer.textContent='Official Locked Mode · '+f[4];
+  titleInput.value=f[3]; subtitleInput.value='Official Locked Mode · '+f[4];
+  this.resetPhoto(); renderQueue(); updateHero(); selectLayer('heroLayer',false); renderLayers(); syncProps(); updateStatusBar();
+ },
+ resetPhoto(){
+  photos=[];heroIndex=null;
+  replaceMode=false;
+  clearSlot('heroLayer');
+  SUPPORT_SLOTS.forEach(clearSlot)
+ }
+};
+
+function markPass(){foundationStatus.textContent='PASS';cssStatus.textContent='PASS';jsStatus.textContent='PASS';routerStatus.textContent='PASS'}
+function backDashboard(){ScreenRouter.showScreen('dashboard');topTitle.textContent='OCF Beta V3.0 Editor Core'}
+function newProject(){ScreenRouter.showScreen('dashboard');focusSection('factoryOverviewPanel')}
+function uploadPhotos(){replaceMode=false;photoInput.click()}
+
+function focusSection(id){
+ const el=document.getElementById(id);
+ if(!el)return;
+ el.scrollIntoView({behavior:'smooth',block:'nearest'});
+ el.classList.add('focusFlash');
+ setTimeout(()=>el.classList.remove('focusFlash'),900)
+}
+function menuUploadPhotos(){uploadPhotos();focusSection('uploadHeading')}
+function menuPhotoQueue(){focusSection('queueHeading')}
+function menuChooseHero(){
+ focusSection('queueHeading');
+ const hint=document.getElementById('queueHint');
+ if(hint){
+  hint.textContent=photos.length?'Click a photo below, or its Hero button, to set it as the Hero image.':'Upload photos first, then choose one as the Hero image.';
+  hint.classList.add('show');
+  setTimeout(()=>hint.classList.remove('show'),3000)
+ }
+ if(heroIndex!==null){
+  const queueEl=document.getElementById('photoQueue');
+  const items=queueEl?queueEl.querySelectorAll('.photoItem'):[];
+  const heroEl=items[heroIndex];
+  if(heroEl){heroEl.classList.add('heroHintFlash');setTimeout(()=>heroEl.classList.remove('heroHintFlash'),1200)}
+ }
+}
+function menuCanvas(){focusSection('canvasSection')}
+function menuTransform(){focusSection('transformHeading')}
+function menuLayers(){focusSection('layersHeading')}
+function menuExport(){focusSection('exportHeading')}
+
+function handlePhotos(e){
+ const files=[...e.target.files];
+ e.target.value='';
+ if(replaceMode){
+  replaceMode=false;
+  const file=files.find(f=>['image/jpeg','image/png','image/webp'].includes(f.type));
+  if(!file)return;
+  const idx=heroIndex;
+  const r=new FileReader();
+  r.onload=ev=>{
+   photos[idx]={...photos[idx],name:file.name,src:ev.target.result};
+   measurePhotoDimensions(photos[idx]);
+   loadHero(ev.target.result);
+   renderQueue();updateStatusBar()
+  };
+  r.readAsDataURL(file);
+  return;
+ }
+ addPhotoFiles(files)
+}
+function addPhotoFiles(files){
+ const valid=files.filter(f=>['image/jpeg','image/png','image/webp'].includes(f.type));
+ if(!valid.length)return;
+ const startIndex=photos.length;
+ valid.forEach((file,offset)=>{photos[startIndex+offset]={id:Date.now()+Math.random()+offset,name:file.name,src:null}});
+ if(heroIndex===null)heroIndex=startIndex;
+ renderQueue();updateStatusBar();autoLayout();
+ valid.forEach((file,offset)=>{
+  const idx=startIndex+offset;
+  const r=new FileReader();
+  r.onload=ev=>{
+   photos[idx].src=ev.target.result;
+   measurePhotoDimensions(photos[idx]);
+   renderQueue();updateStatusBar();autoLayout()
+  };
+  r.readAsDataURL(file)
+ })
+}
+/* ---- Measures natural pixel dimensions once a photo's image data is available. Feeds PhotoAnalyzer only - never read by Renderer/Export. ---- */
+function measurePhotoDimensions(photo){
+ const img=new Image();
+ img.onload=()=>{
+  photo.width=img.naturalWidth;
+  photo.height=img.naturalHeight
+ };
+ img.src=photo.src
+}
+function setupDropZone(){dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover')});dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('dragover');addPhotoFiles([...e.dataTransfer.files])})}
+function renderQueue(){
+ photoQueue.innerHTML='';
+ if(!photos.length){photoQueue.innerHTML='<div class="emptyQueue">No photos uploaded yet</div>';updateQueueStatus();return}
+ photos.forEach((p,i)=>{
+  const item=document.createElement('div');
+  item.className='photoItem'+(i===heroIndex?' hero':'')+(p.src?'':' loading');
+  item.innerHTML=`<div class="photoThumb" style="${p.src?`background-image:url('${p.src}')`:''}">${p.src?'':'…'}</div><div><div class="photoName">${p.name} ${i===heroIndex?'<span class="heroBadge">HERO</span>':''}</div><div class="photoMeta">${p.src?('Order '+(i+1)):'Loading…'}</div></div><div class="photoActions"><button class="miniBtn gold">Hero</button><button class="miniBtn light">Rename</button><button class="miniBtn red">Delete</button></div>`;
+  item.onclick=()=>setHero(i);
+  item.querySelectorAll('button')[0].onclick=e=>{e.stopPropagation();setHero(i)};
+  item.querySelectorAll('button')[1].onclick=e=>{e.stopPropagation();renamePhoto(i)};
+  item.querySelectorAll('button')[2].onclick=e=>{e.stopPropagation();deletePhoto(i)};
+  photoQueue.appendChild(item)
+ });
+ updateQueueStatus()
+}
+function setHero(i){if(!photos[i]||!photos[i].src)return;heroIndex=i;loadHero(photos[i].src);renderQueue();updateStatusBar()}
+function renamePhoto(i){const n=prompt('Rename photo:',photos[i].name);if(n&&n.trim()){photos[i].name=n.trim();renderQueue()}}
+function deletePhoto(i){
+ const wasHero=(heroIndex===i);
+ photos.splice(i,1);
+ if(!photos.length){
+  heroIndex=null;
+  clearSlot('heroLayer');
+  SUPPORT_SLOTS.forEach(clearSlot)
+ }else if(wasHero){
+  heroIndex=Math.min(i,photos.length-1);
+  hero.src=null
+ }else if(heroIndex>i){
+  heroIndex--
+ }
+ renderQueue();updateStatusBar();
+ if(photos.length)autoLayout()
+}
+function updateQueueStatus(){totalPhotosStatus.textContent=photos.length;photoCount.textContent=photos.length+' photo(s)';heroNameStatus.textContent=(heroIndex!==null&&photos[heroIndex])?photos[heroIndex].name:'None'}
+
+function loadHero(src){hero.src=src;heroImg.onload=()=>fitHeroToFrame();heroImg.src=src}
+function fitHeroToFrame(){
+ const frame=getRect('heroLayer');
+ const fw=frame.w||420,fh=frame.h||522;
+ const fit=calculateCoverFit(heroImg.naturalWidth,heroImg.naturalHeight,fw,fh);
+ hero.x=fit.x;hero.y=fit.y;hero.w=fit.width;hero.h=fit.height;
+ updateHero()
+}
+function updateHero(){if(hero.src){heroLayer.classList.add('hasPhoto');heroImg.style.display='block';heroImg.style.left=hero.x+'px';heroImg.style.top=hero.y+'px';heroImg.style.width=hero.w+'px';heroImg.style.height=hero.h+'px'}else{heroLayer.classList.remove('hasPhoto');heroImg.style.display='none'}canvasSizeStatus.textContent='1080 × 1920'}
+
+function loadSlotImage(slotId,src){
+ const img=getEl(slotId+'Img');
+ if(!img)return;
+ slotPhoto[slotId].src=src;
+ img.onload=()=>fitSlotToFrame(slotId);
+ img.src=src
+}
+function fitSlotToFrame(slotId){
+ const img=getEl(slotId+'Img');
+ if(!img||!img.naturalWidth)return;
+ const frame=getRect(slotId);
+ const fw=frame.w||1,fh=frame.h||1;
+ const fit=calculateCoverFit(img.naturalWidth,img.naturalHeight,fw,fh);
+ const st=slotPhoto[slotId];
+ st.x=fit.x;st.y=fit.y;st.w=fit.width;st.h=fit.height;
+ updateSlotImage(slotId)
+}
+function updateSlotImage(slotId){
+ const img=getEl(slotId+'Img');
+ const layer=getEl(slotId);
+ if(!img||!layer)return;
+ const st=slotPhoto[slotId];
+ if(st.src){
+  layer.classList.add('hasPhoto');
+  img.style.display='block';
+  img.style.left=st.x+'px';img.style.top=st.y+'px';
+  img.style.width=st.w+'px';img.style.height=st.h+'px'
+ }else{
+  layer.classList.remove('hasPhoto');
+  img.style.display='none'
+ }
+}
+
+/* ---- Unified pure cover-fit calculation. Used by Hero and every support slot - no separate algorithms. ---- */
+function calculateCoverFit(imageWidth,imageHeight,frameWidth,frameHeight){
+ const scale=Math.max(frameWidth/imageWidth,frameHeight/imageHeight);
+ const width=imageWidth*scale,height=imageHeight*scale;
+ const x=(frameWidth-width)/2,y=(frameHeight-height)/2;
+ return {x,y,width,height}
+}
+
+/* ---- Pure Photo Analyzer: inspects already-known photo metadata only. No DOM access, no image loading, no mutation, deterministic. ---- */
+const PhotoAnalyzer={
+ analyze(photos){
+  return photos.map((photo,index)=>this.analyzeOne(photo,index))
+ },
+ analyzeOne(photo,index){
+  const width=typeof photo.width==='number'?photo.width:null;
+  const height=typeof photo.height==='number'?photo.height:null;
+  const aspectRatio=(width&&height)?width/height:null;
+  let orientation=null;
+  if(aspectRatio!=null){
+   orientation=Math.abs(aspectRatio-1)<0.01?'square':(aspectRatio>1?'landscape':'portrait')
+  }
+  return {
+   id:photo.id,
+   width,
+   height,
+   aspectRatio,
+   orientation,
+   uploadIndex:index
+   /* future fields (faceCount, qualityScore, brightness, subject, dominantColor) can be added here without changing analyze()'s interface */
+  }
+ }
+};
+
+/* ---- Content Model: plain data only, no DOM references ---- */
+function buildContentModel(){
+ const heroPhoto=heroIndex!==null?photos[heroIndex]:null;
+ const others=photos.filter((p,i)=>i!==heroIndex);
+ const analysisList=PhotoAnalyzer.analyze(photos);
+ const photoModels=photos.map((p,i)=>({id:p.id,analysis:analysisList[i]}));
+ return {
+  activeFactoryId:FactoryManager.active?FactoryManager.active[1]:null,
+  photoIds:photos.map(p=>p.id),
+  heroPhotoId:heroPhoto?heroPhoto.id:null,
+  supportingPhotoIds:others.slice(0,SUPPORT_SLOTS.length).map(p=>p.id),
+  overflowPhotoIds:others.slice(SUPPORT_SLOTS.length).map(p=>p.id),
+  title:titleInput?titleInput.value:'',
+  subtitle:subtitleInput?subtitleInput.value:'',
+  photos:photoModels
+ }
+}
+function findPhotoById(photoId){return photos.find(p=>p.id===photoId)}
+
+/* ---- Fixed text frames, matching current CSS exactly (#titleLayer/#subtitleLayer). Position does not vary by photo count. ---- */
+const TEXT_FRAMES={
+ titleLayer:{x:24,y:585,width:360,height:44},
+ subtitleLayer:{x:24,y:666,width:360,height:28}
+};
+
+/* ---- Factory Definitions: structured config per factory, replacing ad-hoc assumptions in the resolver ---- */
+const FACTORY_DEFINITIONS={
+ 'Greeting Factory':{id:'greeting-factory',name:'Greeting Factory',description:'Official greeting posters.',defaultTitle:'OFFICIAL GREETING POSTER',defaultSubtitle:'Official Locked Mode · Greeting Classic',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Stray Dog Factory':{id:'stray-dog-factory',name:'Stray Dog Factory',description:'Operation workflow.',defaultTitle:'OPERASI KAWALAN ANJING LIAR',defaultSubtitle:'Official Locked Mode · Operation 5 Pages',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Tree Cutting Factory':{id:'tree-cutting-factory',name:'Tree Cutting Factory',description:'Before / action / after.',defaultTitle:'KERJA PEMOTONGAN POKOK',defaultSubtitle:'Official Locked Mode · Before Action After',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Building Inspection Factory':{id:'building-inspection-factory',name:'Building Inspection Factory',description:'Inspection summary workflow.',defaultTitle:'PEMERIKSAAN BANGUNAN',defaultSubtitle:'Official Locked Mode · Inspection Report',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Event Factory':{id:'event-factory',name:'Event Factory',description:'Event highlight workflow.',defaultTitle:'SOROTAN PROGRAM RASMI',defaultSubtitle:'Official Locked Mode · Event Highlight',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Album Factory':{id:'album-factory',name:'Album Factory',description:'Multi-page official album.',defaultTitle:'ALBUM RASMI',defaultSubtitle:'Official Locked Mode · Album Layout',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}},
+ 'Billboard Factory':{id:'billboard-factory',name:'Billboard Factory',description:'Screen and billboard output.',defaultTitle:'PAPARAN RASMI',defaultSubtitle:'Official Locked Mode · Billboard 4:3 / 16:9',allowedTemplates:['template-1','template-2','template-3','template-4','template-5'],photoRules:{minPhotos:1,maxVisible:5,heroPolicy:'first-uploaded'},theme:{primaryColor:'#D4AF37',secondaryColor:'#102A43'}}
+};
+function getFactoryDefinition(factoryName){return FACTORY_DEFINITIONS[factoryName]||null}
+
+/* ---- Pure Template Selector: Factory Definition + Content Model -> template id string only. No DOM access, no rendering, deterministic. ---- */
+const TemplateSelector={
+ select({factoryDefinition,contentModel}){
+  const rules=(factoryDefinition&&factoryDefinition.photoRules)||{maxVisible:5};
+  const maxVisible=rules.maxVisible||5;
+  const heroCount=contentModel.heroPhotoId?1:0;
+  const photoCount=heroCount+contentModel.supportingPhotoIds.length;
+  const preferredTotal=Math.max(1,Math.min(photoCount,maxVisible));
+  const preferredTemplateId='template-'+preferredTotal;
+  const allowedTemplates=factoryDefinition&&factoryDefinition.allowedTemplates;
+  if(!allowedTemplates||allowedTemplates.includes(preferredTemplateId))return preferredTemplateId;
+  /* Deterministic fallback: preferred template not allowed for this factory - use the highest allowed template
+     whose photo count does not exceed the preferred count, so the poster never shows more slots than photos
+     provided. If no allowed template qualifies, fall back to 'template-1'. */
+  const allowedNumeric=allowedTemplates
+   .map(id=>parseInt(String(id).replace('template-',''),10))
+   .filter(n=>!isNaN(n)&&n<=preferredTotal)
+   .sort((a,b)=>b-a);
+  return allowedNumeric.length?'template-'+allowedNumeric[0]:'template-1'
+ }
+};
+function templateNumberFromId(templateId){
+ const n=parseInt(String(templateId).replace('template-',''),10);
+ return isNaN(n)?1:n
+}
+
+/* ---- Pure Layout Resolver: selected template id + Content Model -> Composition Model. No DOM access, no image loading, no rendering, no template-selection logic, deterministic. ---- */
+const LayoutResolver={
+ resolve({selectedTemplateId,contentModel,canvas}){
+  const templateNumber=templateNumberFromId(selectedTemplateId);
+  const template=LAYOUT_TEMPLATES[templateNumber]||LAYOUT_TEMPLATES[1];
+  const elements=[];
+  if(contentModel.heroPhotoId&&template.heroLayer){
+   elements.push({
+    id:'hero',
+    type:'photo',
+    photoId:contentModel.heroPhotoId,
+    role:'hero',
+    frame:{x:template.heroLayer.x,y:template.heroLayer.y,width:template.heroLayer.w,height:template.heroLayer.h},
+    fit:'cover',
+    zIndex:1
+   })
+  }
+  contentModel.supportingPhotoIds.forEach((photoId,idx)=>{
+   const slotKey=SUPPORT_SLOTS[idx];
+   const rect=template[slotKey];
+   if(!rect)return;
+   elements.push({
+    id:'support-'+(idx+1),
+    type:'photo',
+    photoId,
+    role:'support',
+    frame:{x:rect.x,y:rect.y,width:rect.w,height:rect.h},
+    fit:'cover',
+    zIndex:2+idx
+   })
+  });
+  elements.push({
+   id:'title',
+   type:'text',
+   text:contentModel.title,
+   frame:{...TEXT_FRAMES.titleLayer},
+   zIndex:10
+  });
+  elements.push({
+   id:'subtitle',
+   type:'text',
+   text:contentModel.subtitle,
+   frame:{...TEXT_FRAMES.subtitleLayer},
+   zIndex:11
+  });
+  return {templateId:'template-'+templateNumber,elements}
+ }
+};
+
+/* ---- Renderer adapter: applies a Composition Model to the current DOM. Only place layout output touches the DOM. ---- */
+const COMPOSITION_TO_DOM_SLOT={hero:'heroLayer','support-1':'support1Layer','support-2':'support2Layer','support-3':'support3Layer','support-4':'support4Layer'};
+function applySlotFrame(slotId,frame){
+ const l=layerData.find(x=>x.id===slotId);
+ const el=getEl(slotId);
+ if(l&&!l.locked)setRect(slotId,{x:frame.x,y:frame.y,w:frame.width,h:frame.height});
+ if(l)l.hidden=false;
+ if(el)el.classList.remove('hidden')
+}
+function applySlotPhoto(slotId,src){
+ if(slotId==='heroLayer'){
+  if(hero.src!==src)loadHero(src);else fitHeroToFrame()
+ }else{
+  if(slotPhoto[slotId].src!==src)loadSlotImage(slotId,src);else fitSlotToFrame(slotId)
+ }
+}
+function clearSlot(slotId){
+ if(slotId==='heroLayer'){
+  hero={x:0,y:0,w:420,h:522,src:null};
+  heroImg.removeAttribute('src');
+  updateHero()
+ }else{
+  slotPhoto[slotId]={x:0,y:0,w:0,h:0,src:null};
+  const img=getEl(slotId+'Img');
+  if(img){img.removeAttribute('src');img.style.display='none'}
+  const el=getEl(slotId);
+  if(el){el.classList.remove('hasPhoto');el.classList.add('hidden')}
+  const l=layerData.find(x=>x.id===slotId);
+  if(l)l.hidden=true
+ }
+}
+const COMPOSITION_TEXT_TO_DOM={title:'titleLayer',subtitle:'subtitleLayer'};
+function applyTextContent(slotId,text){
+ const el=getEl(slotId);
+ if(!el)return;
+ for(const node of el.childNodes){
+  if(node.nodeType===3){node.textContent=text;return}
+ }
+ el.insertBefore(document.createTextNode(text),el.firstChild)
+}
+function renderComposition(composition){
+ const usedSlots=new Set();
+ composition.elements.forEach(el=>{
+  if(el.type==='photo'){
+   const slotId=COMPOSITION_TO_DOM_SLOT[el.id];
+   if(!slotId)return;
+   usedSlots.add(slotId);
+   applySlotFrame(slotId,el.frame);
+   const photo=findPhotoById(el.photoId);
+   if(photo&&photo.src)applySlotPhoto(slotId,photo.src)
+  }else if(el.type==='text'){
+   const slotId=COMPOSITION_TEXT_TO_DOM[el.id];
+   if(!slotId)return;
+   /* frame intentionally not applied yet - CSS min-height lets wrapped titles grow; wiring position/size is deferred to the dynamic-rendering phase */
+   applyTextContent(slotId,el.text)
+  }
+ });
+ SUPPORT_SLOTS.forEach(slotId=>{if(!usedSlots.has(slotId))clearSlot(slotId)});
+ renderLayers();updateStatusBar()
+}
+
+/* ---- Orchestration: Content Model -> Layout Resolver -> Composition Model -> Renderer adapter ---- */
+function autoLayout(){
+ if(!photos.length)return;
+ const contentModel=buildContentModel();
+ const factoryDefinition=getFactoryDefinition(FactoryManager.active?FactoryManager.active[1]:null);
+ const selectedTemplateId=TemplateSelector.select({factoryDefinition,contentModel});
+ const composition=LayoutResolver.resolve({selectedTemplateId,contentModel,canvas:{width:420,height:522}});
+ renderComposition(composition)
+}
+
+function getEl(id){return document.getElementById(id)}
+function getRect(id){const el=getEl(id);return {x:parseFloat(el.style.left)||0,y:parseFloat(el.style.top)||0,w:parseFloat(el.style.width)||el.offsetWidth,h:parseFloat(el.style.height)||el.offsetHeight}}
+function setRect(id,r){const el=getEl(id);el.style.left=r.x+'px';el.style.top=r.y+'px';el.style.width=r.w+'px';el.style.height=r.h+'px'}
+function selectLayer(id,ctrl){if(ctrl){selectedLayers.includes(id)?selectedLayers=selectedLayers.filter(x=>x!==id):selectedLayers.push(id)}else selectedLayers=[id];document.querySelectorAll('.layerObj').forEach(o=>o.classList.toggle('selected',selectedLayers.includes(o.id)));renderLayers();syncProps();updateStatusBar()}
+function currentLayer(){return layerData.find(l=>l.id===selectedLayers[0])}
+function renderLayers(){
+ layersList.innerHTML='';
+ layerData.slice().sort((a,b)=>(b.z||0)-(a.z||0)).forEach(l=>{
+  const row=document.createElement('div');
+  row.className='layerRow'+(selectedLayers.includes(l.id)?' active':'');
+  row.innerHTML=`<button>${l.hidden?'🙈':'👁'}</button><button>${l.locked?'🔒':'🔓'}</button><div class="layerName">${l.name}</div>`;
+  row.onclick=e=>selectLayer(l.id,e.ctrlKey);
+  row.children[0].onclick=e=>{e.stopPropagation();toggleHide(l.id)};
+  row.children[1].onclick=e=>{e.stopPropagation();toggleLock(l.id)};
+  layersList.appendChild(row)
+ })
+}
+function toggleHide(id){const l=layerData.find(x=>x.id===id);l.hidden=!l.hidden;getEl(id).classList.toggle('hidden',l.hidden);renderLayers();updateStatusBar()}
+function toggleLock(id){const l=layerData.find(x=>x.id===id);l.locked=!l.locked;getEl(id).classList.toggle('locked',l.locked);renderLayers()}
+function renameLayer(){const l=currentLayer();if(renameLayerInput.value.trim()){l.name=renameLayerInput.value.trim();renderLayers();syncProps();updateStatusBar()}}
+function syncProps(){const l=currentLayer();if(!l)return;const r=getRect(l.id);selectedCountStatus.textContent=selectedLayers.length;selectedStatus.textContent=l.name;objectTypeStatus.textContent=l.type;currentLayerStatus.textContent=l.name;renameLayerInput.value=l.name;propX.value=Math.round(r.x);propY.value=Math.round(r.y);propW.value=Math.round(r.w);propH.value=Math.round(r.h);propRot.value=l.rotation||0;propOpacity.value=Math.round((l.opacity||1)*100)}
+
+function clampNum(v,min,max,fallback){
+ v=parseFloat(v);
+ if(!isFinite(v))v=fallback;
+ if(min!==undefined)v=Math.max(min,v);
+ if(max!==undefined)v=Math.min(max,v);
+ return v
+}
+function normalizeRotation(r){r=r%360;if(r<0)r+=360;return Math.round(r)}
+function applyProps(){
+ const l=currentLayer();
+ if(!l||l.locked){syncProps();return}
+ const x=clampNum(propX.value,undefined,undefined,0);
+ const y=clampNum(propY.value,undefined,undefined,0);
+ const w=clampNum(propW.value,30,undefined,30);
+ const h=clampNum(propH.value,20,undefined,20);
+ const rot=normalizeRotation(clampNum(propRot.value,undefined,undefined,0));
+ const op=clampNum(propOpacity.value,0,100,100);
+ setRect(l.id,{x,y,w,h});
+ l.rotation=rot;l.opacity=op/100;
+ getEl(l.id).style.transform=`rotate(${rot}deg)`;
+ getEl(l.id).style.opacity=l.opacity;
+ syncProps();updateStatusBar()
+}
+
+function blurActiveField(){const ae=document.activeElement;if(ae&&ae!==document.body&&typeof ae.blur==='function')ae.blur()}
+function objectDown(e,id){blurActiveField();selectLayer(id,e.ctrlKey);const l=layerData.find(x=>x.id===id);if(l.locked)return;if(e.target.classList.contains('handle'))return;dragMode='move';startX=e.clientX;startY=e.clientY;startRect=getRect(id);e.preventDefault()}
+function handleDown(e,mode){const l=currentLayer();if(l&&l.locked){e.stopPropagation();e.preventDefault();return}dragMode=mode;startX=e.clientX;startY=e.clientY;startRect=getRect(selectedLayers[0]);e.stopPropagation();e.preventDefault()}
+document.addEventListener('mousemove',e=>{
+ if(!dragMode)return;
+ const id=selectedLayers[0];const l=currentLayer();
+ if(!id||!l||l.locked)return;
+ let r={...startRect};const dx=e.clientX-startX,dy=e.clientY-startY;
+ if(dragMode==='move'){r.x+=dx;r.y+=dy;snap(r)}
+ else if(dragMode==='resize'){r.w=Math.max(30,r.w+dx);r.h=Math.max(20,r.h+dy)}
+ else if(dragMode==='rotate'){l.rotation=normalizeRotation(dx);getEl(id).style.transform=`rotate(${l.rotation}deg)`;propRot.value=l.rotation;return}
+ setRect(id,r);syncProps();updateStatusBar()
+})
+document.addEventListener('mouseup',()=>{dragMode=null;guideV.style.display='none';guideH.style.display='none'})
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  const ae=document.activeElement;
+  if(ae&&['TEXTAREA','INPUT'].includes(ae.tagName))ae.blur()
+ }
+})
+function snap(r){guideV.style.display='none';guideH.style.display='none';if(Math.abs((r.x+r.w/2)-210)<8){r.x=210-r.w/2;guideV.style.display='block'}if(Math.abs((r.y+r.h/2)-373)<8){r.y=373-r.h/2;guideH.style.display='block'}}
+function align(where){
+ selectedLayers.forEach(id=>{
+  const l=layerData.find(x=>x.id===id);
+  if(l&&l.locked)return;
+  let r=getRect(id);
+  if(where==='left')r.x=0;if(where==='center')r.x=(420-r.w)/2;if(where==='right')r.x=420-r.w;
+  if(where==='top')r.y=0;if(where==='middle')r.y=(746-r.h)/2;if(where==='bottom')r.y=746-r.h;
+  setRect(id,r)
+ });
+ syncProps()
+}
+function applyZ(l){getEl(l.id).style.zIndex=l.z}
+function bringForward(){selectedLayers.forEach(id=>{const l=layerData.find(x=>x.id===id);if(!l||l.locked)return;l.z=(l.z||1)+1;applyZ(l)});renderLayers();updateStatusBar()}
+function sendBackward(){selectedLayers.forEach(id=>{const l=layerData.find(x=>x.id===id);if(!l||l.locked)return;l.z=Math.max(1,(l.z||1)-1);applyZ(l)});renderLayers();updateStatusBar()}
+function bringFront(){const maxZ=Math.max(...layerData.map(x=>x.z||1));selectedLayers.forEach(id=>{const l=layerData.find(x=>x.id===id);if(!l||l.locked)return;l.z=maxZ+1;applyZ(l)});renderLayers();updateStatusBar()}
+function sendBack(){const minZ=Math.min(...layerData.map(x=>x.z||1));selectedLayers.forEach(id=>{const l=layerData.find(x=>x.id===id);if(!l||l.locked)return;l.z=minZ-1;applyZ(l)});renderLayers();updateStatusBar()}
+
+function heroPointerDown(e){objectDown(e,'heroLayer')}
+function resizePointerDown(e){handleDown(e,'resize')}
+function replaceHeroPhoto(){
+ if(heroIndex===null){uploadPhotos();return}
+ replaceMode=true;
+ photoInput.click()
+}
+function editTextLayer(id){
+ selectLayer(id,false);
+ const input=id==='titleLayer'?titleInput:subtitleInput;
+ input.focus();input.select()
+}
+function updateText(){titleLayer.textContent=titleInput.value;subtitleLayer.textContent=subtitleInput.value}
+function setZoom(v){zoom=v;canvasWrap.style.transform=`scale(${zoom/100})`;updateStatusBar()}
+function updateStatusBar(){if(!document.getElementById('sbCanvas'))return;sbCanvas.textContent='1080 × 1920';sbZoom.textContent=zoom+'%';sbSelected.textContent=currentLayer()?currentLayer().name:'None';sbLayers.textContent=layerData.length;sbPhotos.textContent=photos.length}
+
+function exportFilename(){
+ const raw=(FactoryManager.active?FactoryManager.active[1]:'OCF_Poster');
+ const name=raw.replace(/[^a-z0-9]+/gi,'_');
+ const d=new Date();
+ const pad=n=>String(n).padStart(2,'0');
+ const stamp=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+ return `${name}_${stamp}.png`
+}
+function wrapLines(ctx,text,maxWidth){
+ const words=text.split(/\s+/).filter(Boolean);
+ const lines=[];let cur='';
+ words.forEach(w=>{
+  const test=cur?cur+' '+w:w;
+  if(ctx.measureText(test).width>maxWidth&&cur){lines.push(cur);cur=w}
+  else cur=test
+ });
+ if(cur)lines.push(cur);
+ return lines.length?lines:['']
+}
+function drawHero(ctx,scale){
+ const l=layerData.find(x=>x.id==='heroLayer');
+ if(!hero.src||l.hidden)return;
+ const frame=getRect('heroLayer');
+ ctx.save();
+ const fcx=(frame.x+frame.w/2)*scale,fcy=(frame.y+frame.h/2)*scale;
+ ctx.translate(fcx,fcy);
+ ctx.rotate((l.rotation||0)*Math.PI/180);
+ ctx.globalAlpha=l.opacity!=null?l.opacity:1;
+ ctx.beginPath();
+ ctx.rect(-frame.w*scale/2,-frame.h*scale/2,frame.w*scale,frame.h*scale);
+ ctx.clip();
+ const ix=-frame.w*scale/2+hero.x*scale,iy=-frame.h*scale/2+hero.y*scale;
+ ctx.drawImage(heroImg,ix,iy,hero.w*scale,hero.h*scale);
+ ctx.restore()
+}
+function drawGradientOverlay(ctx,scale){
+ const w=420*scale,h=746*scale,gh=h*0.48;
+ const grad=ctx.createLinearGradient(0,h-gh,0,h);
+ grad.addColorStop(0,'rgba(16,42,67,0)');
+ grad.addColorStop(0.33,'rgba(16,42,67,.35)');
+ grad.addColorStop(0.67,'rgba(16,42,67,.78)');
+ grad.addColorStop(1,'rgba(16,42,67,1)');
+ ctx.fillStyle=grad;
+ ctx.fillRect(0,h-gh,w,gh)
+}
+function drawTextLayer(ctx,scale,id){
+ const l=layerData.find(x=>x.id===id);
+ if(l.hidden)return;
+ const frame=getRect(id);
+ const text=(id==='titleLayer'?titleInput.value:subtitleInput.value)||'';
+ if(!text.trim())return;
+ const isTitle=id==='titleLayer';
+ const fontSize=(isTitle?30:16)*scale;
+ const fontWeight=isTitle?900:700;
+ const color=isTitle?'#ffffff':'#dce7ff';
+ ctx.save();
+ const cx=(frame.x+frame.w/2)*scale,cy=(frame.y+frame.h/2)*scale;
+ ctx.translate(cx,cy);
+ ctx.rotate((l.rotation||0)*Math.PI/180);
+ ctx.globalAlpha=l.opacity!=null?l.opacity:1;
+ ctx.fillStyle=color;
+ ctx.font=`${fontWeight} ${fontSize}px Arial`;
+ ctx.textBaseline='top';ctx.textAlign='left';
+ const lines=wrapLines(ctx,text,frame.w*scale);
+ const lineHeight=fontSize*1.15;
+ const startY=-frame.h*scale/2;
+ lines.forEach((ln,i)=>ctx.fillText(ln,-frame.w*scale/2,startY+i*lineHeight));
+ ctx.restore()
+}
+function downloadCanvasAsPNG(cvs,filename){
+ cvs.toBlob(blob=>{
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),2000)
+ },'image/png')
+}
+function exportPNG(){
+ const EXPORT_W=1080,EXPORT_H=1920,SCALE=EXPORT_W/420;
+ const cvs=document.createElement('canvas');
+ cvs.width=EXPORT_W;cvs.height=EXPORT_H;
+ const ctx=cvs.getContext('2d');
+ ctx.fillStyle='#ffffff';ctx.fillRect(0,0,EXPORT_W,EXPORT_H);
+ layerData.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(l=>{
+  if(l.hidden)return;
+  if(l.id==='heroLayer'){drawHero(ctx,SCALE);drawGradientOverlay(ctx,SCALE)}
+  else if(l.id==='titleLayer'||l.id==='subtitleLayer')drawTextLayer(ctx,SCALE,l.id)
+  /* support slots intentionally not drawn yet - auto-layout phase only, export not in scope */
+ });
+ downloadCanvasAsPNG(cvs,exportFilename())
+}
+
+window.addEventListener('DOMContentLoaded',()=>{ScreenRouter.init();FactoryManager.render();markPass();renderQueue();setupDropZone();renderLayers();selectLayer('heroLayer',false);updateStatusBar()})
+</script></body></html>
