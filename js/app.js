@@ -170,14 +170,14 @@ function fitHeroToFrame(){
 function updateHero(){if(hero.src){heroLayer.classList.add('hasPhoto');heroImg.style.display='block';heroImg.style.left=hero.x+'px';heroImg.style.top=hero.y+'px';heroImg.style.width=hero.w+'px';heroImg.style.height=hero.h+'px'}else{heroLayer.classList.remove('hasPhoto');heroImg.style.display='none'}canvasSizeStatus.textContent='1080 × 1920'}
 
 function loadSlotImage(slotId,src){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  if(!img)return;
  slotPhoto[slotId].src=src;
  img.onload=()=>fitSlotToFrame(slotId);
  img.src=src
 }
 function fitSlotToFrame(slotId){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  if(!img||!img.naturalWidth)return;
  const frame=getRect(slotId);
  const fw=frame.w||1,fh=frame.h||1;
@@ -187,7 +187,7 @@ function fitSlotToFrame(slotId){
  updateSlotImage(slotId)
 }
 function updateSlotImage(slotId){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  const layer=getEl(slotId);
  if(!img||!layer)return;
  const st=slotPhoto[slotId];
@@ -370,7 +370,7 @@ function clearSlot(slotId){
   updateHero()
  }else{
   slotPhoto[slotId]={x:0,y:0,w:0,h:0,src:null};
-  const img=getEl(slotId+'Img');
+  const img=getEl(slotId.replace('Layer','Img'));
   if(img){img.removeAttribute('src');img.style.display='none'}
   const el=getEl(slotId);
   if(el){el.classList.remove('hasPhoto');el.classList.add('hidden')}
@@ -554,6 +554,24 @@ function drawHero(ctx,scale){
  ctx.drawImage(heroImg,ix,iy,hero.w*scale,hero.h*scale);
  ctx.restore()
 }
+function drawSupportSlot(ctx,scale,slotId){
+ const l=layerData.find(x=>x.id===slotId);
+ const st=slotPhoto[slotId];
+ const img=getEl(slotId.replace('Layer','Img'));
+ if(!st.src||!img||l.hidden)return;
+ const frame=getRect(slotId);
+ ctx.save();
+ const fcx=(frame.x+frame.w/2)*scale,fcy=(frame.y+frame.h/2)*scale;
+ ctx.translate(fcx,fcy);
+ ctx.rotate((l.rotation||0)*Math.PI/180);
+ ctx.globalAlpha=l.opacity!=null?l.opacity:1;
+ ctx.beginPath();
+ ctx.rect(-frame.w*scale/2,-frame.h*scale/2,frame.w*scale,frame.h*scale);
+ ctx.clip();
+ const ix=-frame.w*scale/2+st.x*scale,iy=-frame.h*scale/2+st.y*scale;
+ ctx.drawImage(img,ix,iy,st.w*scale,st.h*scale);
+ ctx.restore()
+}
 function drawGradientOverlay(ctx,scale){
  const w=420*scale,h=746*scale,gh=h*0.48;
  const grad=ctx.createLinearGradient(0,h-gh,0,h);
@@ -607,7 +625,7 @@ function exportPNG(){
   if(l.hidden)return;
   if(l.id==='heroLayer'){drawHero(ctx,SCALE);drawGradientOverlay(ctx,SCALE)}
   else if(l.id==='titleLayer'||l.id==='subtitleLayer')drawTextLayer(ctx,SCALE,l.id)
-  /* support slots intentionally not drawn yet - auto-layout phase only, export not in scope */
+  else if(SUPPORT_SLOTS.includes(l.id))drawSupportSlot(ctx,SCALE,l.id)
  });
  downloadCanvasAsPNG(cvs,exportFilename())
 }

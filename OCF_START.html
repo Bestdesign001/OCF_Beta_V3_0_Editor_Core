@@ -12,7 +12,7 @@
 .badge{display:inline-block;background:#ecfdf5;color:#166534;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.projectRow{border:1px solid #d9e1ec;border-radius:14px;padding:12px;background:#f8fafc;display:flex;justify-content:space-between;margin:10px 0}
 .workspaceTop{height:72px;background:white;border-bottom:1px solid #d9e1ec;display:flex;align-items:center;justify-content:space-between;padding:0 18px}.workspaceTop b{font-size:20px}.workspaceTop span{display:block;color:#64748b;font-size:12px}
 .workflowTop{height:44px;background:#102A43;color:white;display:flex;align-items:center;justify-content:center;gap:9px;font-size:12px}.workflowTop span{background:rgba(255,255,255,.13);border-radius:999px;padding:6px 9px}
-.workgrid{height:calc(100vh - 56px - 72px - 44px - 34px);display:grid;grid-template-columns:340px 1fr 390px}.left,.right{background:white;padding:16px;overflow:auto;border-right:1px solid #d9e1ec}.right{border-left:1px solid #d9e1ec;border-right:0}.center{display:flex;align-items:center;justify-content:center;background:#dfe8f3;position:relative}
+.workgrid{height:calc(100vh - 56px - 72px - 44px - 34px);display:grid;grid-template-columns:340px 190px 1fr 390px}.left,.right{background:white;padding:16px;overflow:auto;border-right:1px solid #d9e1ec}.right{border-left:1px solid #d9e1ec;border-right:0}.center{display:flex;align-items:center;justify-content:center;background:#dfe8f3;position:relative}.pagePanel{background:#f8fafc;padding:12px;overflow-y:auto;border-right:1px solid #d9e1ec}.pageCard{display:flex;gap:8px;align-items:center;border:1px solid #d9e1ec;border-radius:10px;padding:8px 10px;margin:0 0 8px;background:white;cursor:pointer}.pageCard.active{border-color:#D4AF37;background:#fff8dc}.pageThumb{width:28px;height:28px;border-radius:6px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;color:#102A43}.pageInfo{overflow:hidden;min-width:0}.pageTitle{font-size:12px;font-weight:800;color:#102A43;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pageMeta{font-size:10px;color:#64748b;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .statusBar{height:34px;background:#0f2740;color:white;display:flex;align-items:center;gap:18px;padding:0 16px;font-size:12px}
 .canvasWrap{transform-origin:center center}.canvas{width:420px;height:746px;background:white;position:relative;overflow:hidden;box-shadow:0 14px 36px rgba(0,0,0,.22)}
 .layerObj{position:absolute;user-select:none;cursor:pointer;transform-origin:center center}.layerObj.selected{outline:3px solid #D4AF37;outline-offset:-3px}.layerObj.locked{cursor:not-allowed}.layerObj.hidden{display:none}
@@ -44,7 +44,8 @@
 <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handlePhotos(event)">
 <main id="dashboardScreen" class="screen"><section class="header"><div><h1>QueenRay Official Factory Dashboard</h1><p>Editor Core connects Photo Queue, Canvas, Layers, Transform and Export.</p></div><div class="status">SYSTEM STATUS: PASS</div></section><section class="grid"><div class="card" id="factoryOverviewPanel"><h2>Factory Overview</h2><div id="factoryGrid" class="factoryGrid"></div></div><div class="card"><h2>System Status</h2><div class="panel">Foundation: <b id="foundationStatus">CHECKING</b></div><div class="panel">CSS Loaded: <b id="cssStatus">CHECKING</b></div><div class="panel">JavaScript Loaded: <b id="jsStatus">CHECKING</b></div><div class="panel">Screen Router: <b id="routerStatus">CHECKING</b></div><div class="panel">Official Locked Mode: <b>ON</b></div><h2>Recent Projects</h2><div class="projectRow"><div><b>No saved projects yet</b><div class="small">Projects aren't saved between sessions in this beta</div></div><button class="btn light" disabled title="No saved projects yet">Open</button></div></div></section></main>
 <main id="workspaceScreen" class="screen"><div class="workspaceTop"><div><b id="activeFactoryName">Greeting Factory</b><span id="activeFactoryDesc">Official greeting poster workflow</span></div><div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button><button class="btn gold" onclick="exportPNG()">Export PNG</button></div></div><div class="workflowTop"><span onclick="menuUploadPhotos()">Upload Photos</span><span onclick="menuPhotoQueue()">Photo Queue</span><span onclick="menuChooseHero()">Choose Hero</span><span onclick="menuCanvas()">Canvas</span><span onclick="menuTransform()">Transform</span><span onclick="menuLayers()">Layers</span><span onclick="menuExport()">Export</span></div>
-<div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
+<div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="pasteHeading">Paste Text</h3><textarea id="pasteTextInput" placeholder="Paste WhatsApp or other text here" oninput="capturePastedText()"></textarea><div id="pasteDetected" class="small"></div><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="heroAnalysisHeading">Hero Analysis</h3><div id="heroAnalysisPanel" class="small">Upload photos to see analysis.</div><div id="buildDraftPanel" class="small">Upload photos to build a draft.</div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
+<aside class="pagePanel"><h3 id="pagesHeading">Pages</h3><div id="pageList"></div><button class="btn gold" onclick="addPage()">Add Page</button><button class="btn light" onclick="duplicatePage()">Duplicate Page</button><button class="btn red" id="deletePageBtn" onclick="deletePage(project.activePageIndex)">Delete Page</button><button class="btn light" onclick="prevPage()">◀ Prev Page</button><button class="btn light" onclick="nextPage()">Next Page ▶</button></aside>
 <section class="center" id="canvasSection"><div id="canvasWrap" class="canvasWrap"><div class="canvas" id="canvas"><div id="heroLayer" class="layerObj" style="z-index:1" onmousedown="heroPointerDown(event)" ondblclick="replaceHeroPhoto()"><span class="placeholder">Hero Photo Area</span><img id="heroImg" draggable="false"><div class="handle h-br" onmousedown="resizePointerDown(event)"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support1Layer" class="layerObj slotLayer hidden" style="z-index:2" onmousedown="objectDown(event,'support1Layer')"><span class="placeholder">Photo</span><img id="support1Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support2Layer" class="layerObj slotLayer hidden" style="z-index:3" onmousedown="objectDown(event,'support2Layer')"><span class="placeholder">Photo</span><img id="support2Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support3Layer" class="layerObj slotLayer hidden" style="z-index:4" onmousedown="objectDown(event,'support3Layer')"><span class="placeholder">Photo</span><img id="support3Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support4Layer" class="layerObj slotLayer hidden" style="z-index:5" onmousedown="objectDown(event,'support4Layer')"><span class="placeholder">Photo</span><img id="support4Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div class="grad" style="z-index:7"></div><div id="titleLayer" class="layerObj" style="z-index:10" onmousedown="objectDown(event,'titleLayer')" ondblclick="editTextLayer('titleLayer')">OFFICIAL GREETING POSTER<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="subtitleLayer" class="layerObj" style="z-index:11" onmousedown="objectDown(event,'subtitleLayer')" ondblclick="editTextLayer('subtitleLayer')">Official Locked Mode · Auto Layout Preview<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="guideV" class="guide guideV"></div><div id="guideH" class="guide guideH"></div></div></div></section>
 <aside class="right"><h3>Status</h3><div class="statusLine">Selected Count: <b id="selectedCountStatus">1</b></div><div class="statusLine">Object Type: <b id="objectTypeStatus">Photo Frame</b></div><div class="statusLine">Current Layer: <b id="currentLayerStatus">Hero Photo Area</b></div><div class="statusLine">Selected Object: <b id="selectedStatus">None</b></div><div class="statusLine">Canvas Size: <b id="canvasSizeStatus">1080 × 1920</b></div><div class="statusLine">Total Photos: <b id="totalPhotosStatus">0</b></div><div class="statusLine">Hero Photo: <b id="heroNameStatus">None</b></div>
 <h3 id="transformHeading">Object Transform</h3><div class="panel propGrid"><label>X<input id="propX" type="number" oninput="applyProps()"></label><label>Y<input id="propY" type="number" oninput="applyProps()"></label><label>Width<input id="propW" type="number" oninput="applyProps()"></label><label>Height<input id="propH" type="number" oninput="applyProps()"></label><label>Rotation<input id="propRot" type="number" oninput="applyProps()"></label><label>Opacity %<input id="propOpacity" type="number" min="0" max="100" oninput="applyProps()"></label></div>
@@ -60,6 +61,7 @@ const FactoryManager={factories:[['🎉','Greeting Factory','Official greeting p
 let photos=[],heroIndex=null,hero={x:0,y:0,w:420,h:522,src:null};
 let selectedLayers=['heroLayer'], dragMode=null, startX=0,startY=0,startRect=null, zoom=100;
 let replaceMode=false;
+let pastedText='';
 
 const layerData=[
  {id:'heroLayer',name:'Hero Photo Area',type:'Photo Frame',locked:false,hidden:false,rotation:0,opacity:1,z:1},
@@ -89,6 +91,7 @@ const Workspace={
   titleLayer.textContent=f[3]; subtitleLayer.textContent='Official Locked Mode · '+f[4];
   titleInput.value=f[3]; subtitleInput.value='Official Locked Mode · '+f[4];
   this.resetPhoto(); renderQueue(); updateHero(); selectLayer('heroLayer',false); renderLayers(); syncProps(); updateStatusBar();
+  project.pages=[serializeActivePage()]; project.activePageIndex=0; renderPageList();
  },
  resetPhoto(){
   photos=[];heroIndex=null;
@@ -175,7 +178,8 @@ function measurePhotoDimensions(photo){
  const img=new Image();
  img.onload=()=>{
   photo.width=img.naturalWidth;
-  photo.height=img.naturalHeight
+  photo.height=img.naturalHeight;
+  analyzeHeroCandidates()
  };
  img.src=photo.src
 }
@@ -226,14 +230,14 @@ function fitHeroToFrame(){
 function updateHero(){if(hero.src){heroLayer.classList.add('hasPhoto');heroImg.style.display='block';heroImg.style.left=hero.x+'px';heroImg.style.top=hero.y+'px';heroImg.style.width=hero.w+'px';heroImg.style.height=hero.h+'px'}else{heroLayer.classList.remove('hasPhoto');heroImg.style.display='none'}canvasSizeStatus.textContent='1080 × 1920'}
 
 function loadSlotImage(slotId,src){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  if(!img)return;
  slotPhoto[slotId].src=src;
  img.onload=()=>fitSlotToFrame(slotId);
  img.src=src
 }
 function fitSlotToFrame(slotId){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  if(!img||!img.naturalWidth)return;
  const frame=getRect(slotId);
  const fw=frame.w||1,fh=frame.h||1;
@@ -243,7 +247,7 @@ function fitSlotToFrame(slotId){
  updateSlotImage(slotId)
 }
 function updateSlotImage(slotId){
- const img=getEl(slotId+'Img');
+ const img=getEl(slotId.replace('Layer','Img'));
  const layer=getEl(slotId);
  if(!img||!layer)return;
  const st=slotPhoto[slotId];
@@ -309,6 +313,30 @@ function buildContentModel(){
  }
 }
 function findPhotoById(photoId){return photos.find(p=>p.id===photoId)}
+
+/* ---- Pure page planner: Content Model -> ordered plain-data page plan. No DOM access, no rendering, no template/layout logic, deterministic. Always returns at least one page (cover). ---- */
+function planPages(contentModel){
+ const pages=[];
+ pages.push({
+  type:'cover',
+  heroPhotoId:contentModel.heroPhotoId,
+  supportingPhotoIds:contentModel.supportingPhotoIds.slice(0,SUPPORT_SLOTS.length),
+  title:contentModel.title,
+  subtitle:contentModel.subtitle
+ });
+ const overflow=contentModel.overflowPhotoIds||[];
+ for(let i=0;i<overflow.length;i+=SUPPORT_SLOTS.length){
+  const chunk=overflow.slice(i,i+SUPPORT_SLOTS.length);
+  pages.push({
+   type:'content',
+   heroPhotoId:chunk[0]||null,
+   supportingPhotoIds:chunk.slice(1),
+   title:'',
+   subtitle:''
+  })
+ }
+ return pages
+}
 
 /* ---- Fixed text frames, matching current CSS exactly (#titleLayer/#subtitleLayer). Position does not vary by photo count. ---- */
 const TEXT_FRAMES={
@@ -426,7 +454,7 @@ function clearSlot(slotId){
   updateHero()
  }else{
   slotPhoto[slotId]={x:0,y:0,w:0,h:0,src:null};
-  const img=getEl(slotId+'Img');
+  const img=getEl(slotId.replace('Layer','Img'));
   if(img){img.removeAttribute('src');img.style.display='none'}
   const el=getEl(slotId);
   if(el){el.classList.remove('hasPhoto');el.classList.add('hidden')}
@@ -444,6 +472,7 @@ function applyTextContent(slotId,text){
  el.insertBefore(document.createTextNode(text),el.firstChild)
 }
 function renderComposition(composition){
+ clearSlot('heroLayer');
  const usedSlots=new Set();
  composition.elements.forEach(el=>{
   if(el.type==='photo'){
@@ -571,6 +600,449 @@ function editTextLayer(id){
  input.focus();input.select()
 }
 function updateText(){titleLayer.textContent=titleInput.value;subtitleLayer.textContent=subtitleInput.value}
+function capturePastedText(){pastedText=pasteTextInput.value;parsePastedText()}
+function parsePastedText(){
+ const lines=pastedText.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+ const title=lines[0]||'';
+ const subtitle=lines.slice(1).join(' ');
+ titleInput.value=title;
+ subtitleInput.value=subtitle;
+ updateText();
+ pasteDetected.textContent='Detected Title: '+(title||'(none)')+' | Detected Subtitle: '+(subtitle||'(none)')
+}
+
+/* ---- Hero Analysis: display-only scoring, never assigns Hero. FACE_API_AVAILABLE and HERO_SCORE_MAX are fixed once per session so every photo in every run shares the same ceiling. ---- */
+const FACE_API_AVAILABLE=(typeof window.FaceDetector==='function');
+const HERO_SCORE_MAX=FACE_API_AVAILABLE?100:80;
+const photoRawMetrics={};
+const photoFaceResults={};
+const photoAnalysisResults={};
+let recommendedHeroId=null;
+
+function analyzeHeroCandidates(){
+ photos.forEach(p=>{
+  if(!p.src||!p.width||!p.height)return;
+  if(!photoRawMetrics[p.id])computeRawMetrics(p);
+  if(!photoFaceResults[p.id])computeFaceResult(p)
+ });
+ recomputeHeroScores()
+}
+
+function laplacianVariance(data,w,h){
+ const gray=new Float32Array(w*h);
+ for(let i=0;i<w*h;i++){
+  const o=i*4;
+  gray[i]=0.299*data[o]+0.587*data[o+1]+0.114*data[o+2]
+ }
+ const lap=[];
+ for(let y=1;y<h-1;y++){
+  for(let x=1;x<w-1;x++){
+   const i=y*w+x;
+   lap.push((gray[i-1]+gray[i+1]+gray[i-w]+gray[i+w])-4*gray[i])
+  }
+ }
+ if(!lap.length)return 0;
+ const mean=lap.reduce((a,b)=>a+b,0)/lap.length;
+ return lap.reduce((a,b)=>a+(b-mean)*(b-mean),0)/lap.length
+}
+
+function computeRawMetrics(photo){
+ photoRawMetrics[photo.id]={pending:true};
+ const img=new Image();
+ img.onload=()=>{
+  const maxDim=100;
+  const scale=Math.min(1,maxDim/Math.max(img.naturalWidth,img.naturalHeight));
+  const cw=Math.max(1,Math.round(img.naturalWidth*scale));
+  const ch=Math.max(1,Math.round(img.naturalHeight*scale));
+  const cvs=document.createElement('canvas');
+  cvs.width=cw;cvs.height=ch;
+  const ctx=cvs.getContext('2d');
+  ctx.drawImage(img,0,0,cw,ch);
+  let variance=0;
+  try{
+   const data=ctx.getImageData(0,0,cw,ch).data;
+   variance=laplacianVariance(data,cw,ch)
+  }catch(e){variance=0}
+  const ratio=photo.width/photo.height;
+  photoRawMetrics[photo.id]={
+   pending:false,
+   pixelCount:photo.width*photo.height,
+   aspectRatio:ratio,
+   orientation:Math.abs(ratio-1)<0.01?'square':(ratio>1?'landscape':'portrait'),
+   sharpnessVariance:variance
+  };
+  recomputeHeroScores()
+ };
+ img.onerror=()=>{
+  photoRawMetrics[photo.id]={pending:false,pixelCount:photo.width*photo.height,aspectRatio:photo.width/photo.height,orientation:'portrait',sharpnessVariance:0};
+  recomputeHeroScores()
+ };
+ img.src=photo.src
+}
+
+function computeFaceResult(photo){
+ if(!FACE_API_AVAILABLE){photoFaceResults[photo.id]={status:'unavailable',faceBox:null};return}
+ photoFaceResults[photo.id]={status:'pending',faceBox:null};
+ const img=new Image();
+ img.onload=()=>{
+  try{
+   new FaceDetector().detect(img).then(faces=>{
+    if(faces&&faces.length){
+     const b=faces[0].boundingBox;
+     photoFaceResults[photo.id]={status:'found',faceBox:{x:b.x,y:b.y,w:b.width,h:b.height}}
+    }else{
+     photoFaceResults[photo.id]={status:'none',faceBox:null}
+    }
+    recomputeHeroScores()
+   }).catch(()=>{
+    photoFaceResults[photo.id]={status:'error',faceBox:null};
+    recomputeHeroScores()
+   })
+  }catch(e){
+   photoFaceResults[photo.id]={status:'error',faceBox:null};
+   recomputeHeroScores()
+  }
+ };
+ img.onerror=()=>{
+  photoFaceResults[photo.id]={status:'error',faceBox:null};
+  recomputeHeroScores()
+ };
+ img.src=photo.src
+}
+
+function recomputeHeroScores(){
+ const ids=photos.map(p=>p.id);
+ const ready=ids.filter(id=>photoRawMetrics[id]&&!photoRawMetrics[id].pending);
+ if(!ready.length){renderHeroAnalysisPanel();return}
+ const maxPixels=Math.max(...ready.map(id=>photoRawMetrics[id].pixelCount));
+ const maxVariance=Math.max(...ready.map(id=>photoRawMetrics[id].sharpnessVariance),0.0001);
+ const heroFrame=getRect('heroLayer');
+ const heroRatio=heroFrame.w/heroFrame.h;
+ const heroOrientation=Math.abs(heroRatio-1)<0.01?'square':(heroRatio>1?'landscape':'portrait');
+ ready.forEach(id=>{
+  const raw=photoRawMetrics[id];
+  const face=photoFaceResults[id]||{status:FACE_API_AVAILABLE?'pending':'unavailable',faceBox:null};
+  const reasons=[];
+  const resolutionScore=25*(raw.pixelCount/maxPixels);
+  reasons.push('Resolution: '+Math.round(resolutionScore)+'/25');
+  let orientationScore=0;
+  if(raw.orientation===heroOrientation)orientationScore=10;
+  else if(raw.orientation==='square'||heroOrientation==='square')orientationScore=5;
+  reasons.push('Orientation ('+raw.orientation+' vs hero '+heroOrientation+'): '+orientationScore+'/10');
+  const delta=Math.abs(raw.aspectRatio-heroRatio)/heroRatio;
+  const aspectScore=20*Math.max(0,1-delta);
+  reasons.push('Aspect-ratio fit: '+Math.round(aspectScore)+'/20');
+  const sharpnessScore=25*(raw.sharpnessVariance/maxVariance);
+  reasons.push('Estimated sharpness: '+Math.round(sharpnessScore)+'/25');
+  let faceScore=0,centeringScore=0;
+  if(!FACE_API_AVAILABLE){
+   reasons.push('Face detection unavailable in this browser')
+  }else if(face.status==='found'){
+   faceScore=5;
+   reasons.push('Face detected (1 found)');
+   const photo=photos.find(p=>p.id===id);
+   const fb=face.faceBox;
+   const faceCx=fb.x+fb.w/2,faceCy=fb.y+fb.h/2;
+   const imgCx=photo.width/2,imgCy=photo.height/2;
+   const dist=Math.sqrt((faceCx-imgCx)*(faceCx-imgCx)+(faceCy-imgCy)*(faceCy-imgCy));
+   const maxDist=Math.sqrt(imgCx*imgCx+imgCy*imgCy);
+   centeringScore=maxDist>0?15*Math.max(0,1-dist/maxDist):0;
+   reasons.push('Centering (face vs image center): '+Math.round(centeringScore)+'/15')
+  }else if(face.status==='none'){
+   reasons.push('No face detected');
+   reasons.push('Centering not evaluated — no face detected')
+  }else if(face.status==='error'){
+   reasons.push('Face analysis failed');
+   reasons.push('Centering not evaluated — face analysis failed')
+  }else{
+   reasons.push('Face analysis pending')
+  }
+  const total=resolutionScore+orientationScore+aspectScore+sharpnessScore+faceScore+centeringScore;
+  photoAnalysisResults[id]={score:Math.round(total),max:HERO_SCORE_MAX,reasons:reasons}
+ });
+ let best=null;
+ ready.forEach(id=>{if(!best||photoAnalysisResults[id].score>photoAnalysisResults[best].score)best=id});
+ recommendedHeroId=best;
+ renderHeroAnalysisPanel();
+ renderBuildDraftButton()
+}
+
+function renderHeroAnalysisPanel(){
+ const el=getEl('heroAnalysisPanel');
+ if(!el)return;
+ if(!photos.length){el.innerHTML='Upload photos to see analysis.';return}
+ const recPhoto=recommendedHeroId!=null?photos.find(p=>p.id===recommendedHeroId):null;
+ const currentHeroId=(heroIndex!=null&&photos[heroIndex])?photos[heroIndex].id:null;
+ let label='Use Recommended Hero',disabled=false,reason='Assign the recommended photo as Hero';
+ if(recommendedHeroId==null){
+  label='Analyzing...';disabled=true;reason='Hero analysis has not produced a recommendation yet'
+ }else if(!recPhoto){
+  label='Recommendation Unavailable';disabled=true;reason='The recommended photo is no longer in the queue'
+ }else if(recPhoto.id===currentHeroId){
+  label='Already Current Hero';disabled=true;reason='The recommended photo is already the Hero'
+ }
+ const button='<button class="btn gold" id="useRecommendedHeroBtn"'+(disabled?' disabled':'')+' title="'+reason+'" onclick="useRecommendedHero()">'+label+'</button>';
+ el.innerHTML=button+photos.map(p=>{
+  const r=photoAnalysisResults[p.id];
+  if(!r)return '<div>'+p.name+': analyzing…</div>';
+  const tag=p.id===recommendedHeroId?' <b>(Recommended Hero)</b>':'';
+  return '<div style="margin:6px 0"><b>'+p.name+'</b> — '+r.score+'/'+r.max+tag+'<div style="font-size:11px;color:#64748b">'+r.reasons.join(' · ')+'</div></div>'
+ }).join('')
+}
+function useRecommendedHero(){
+ if(recommendedHeroId==null)return;
+ const idx=photos.findIndex(p=>p.id===recommendedHeroId);
+ if(idx>-1)setHero(idx);
+ renderHeroAnalysisPanel()
+}
+
+/* ---- Build AI Draft: assigns Hero + Support from Hero Analysis ranking. Reads photos[]/photoAnalysisResults[] only; assignment ordering lives in local arrays and is never written back. ---- */
+function renderBuildDraftButton(){
+ const el=getEl('buildDraftPanel');
+ if(!el)return;
+ if(!photos.length){el.innerHTML='Upload photos to build a draft.';return}
+ const recPhoto=recommendedHeroId!=null?photos.find(p=>p.id===recommendedHeroId):null;
+ let label='Build AI Draft',disabled=false,reason='Assign Hero and fill Support slots from the analyzed photos';
+ if(recommendedHeroId==null){
+  label='Analyzing...';disabled=true;reason='Hero analysis has not produced a recommendation yet'
+ }else if(!recPhoto||!recPhoto.src){
+  label='Recommendation Unavailable';disabled=true;reason='The recommended photo is no longer in the queue'
+ }
+ el.innerHTML='<button class="btn gold" id="buildAIDraftBtn"'+(disabled?' disabled':'')+' title="'+reason+'" onclick="buildAIDraft()">'+label+'</button>'
+}
+function buildAIDraft(){
+ if(recommendedHeroId==null)return;
+ const recPhoto=photos.find(p=>p.id===recommendedHeroId);
+ if(!recPhoto||!recPhoto.src)return;
+ const heroIdx=photos.findIndex(p=>p.id===recPhoto.id);
+ if(heroIdx<0)return;
+
+ setHero(heroIdx);
+
+ const contentModel=buildContentModel();
+ const plan=planPages(contentModel);
+ const factoryDefinition=getFactoryDefinition(FactoryManager.active?FactoryManager.active[1]:null);
+
+ project.pages=[];
+ project.activePageIndex=0;
+ plan.forEach((planEntry,i)=>{
+  project.activePageIndex=i;
+  const selectedTemplateId=TemplateSelector.select({factoryDefinition,contentModel:planEntry});
+  const composition=LayoutResolver.resolve({selectedTemplateId,contentModel:planEntry,canvas:{width:420,height:522}});
+  console.log('[diag] before renderComposition','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
+  renderComposition(composition);
+  console.log('[diag] after renderComposition','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
+  /* TODO(Phase 2.3): renderComposition() never clears heroLayer when contentModel.heroPhotoId is null - not reachable today since planPages() always sets one, but fix if that changes. */
+  console.log('[diag] before serializeActivePage','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
+  const page=serializeActivePage();
+  console.log('[diag] after serializeActivePage','pageIndex',i,'type',planEntry.type,'heroPhotoId',page.heroPhotoId,'slotPhoto',page.slotPhoto,'hero',page.hero,'t',performance.now());
+  project.pages.push(page)
+ });
+
+ project.activePageIndex=0;
+ renderPageList();
+ loadPageState(0);
+
+ renderBuildDraftButton();
+ renderHeroAnalysisPanel()
+}
+
+/* ---- Page model: plain serializable data only (numbers/strings/booleans/plain objects). Never stores HTMLElement/Image/Canvas references or event listeners. Photos are referenced by stable photo.id only; src is resolved from photos[] at load time. ---- */
+const project={pages:[],activePageIndex:0};
+
+function serializeActivePage(){
+ const heroPhoto=(heroIndex!=null&&photos[heroIndex])?photos[heroIndex]:null;
+ const existing=project.pages[project.activePageIndex];
+ const page={
+  id:existing?existing.id:(Date.now()+Math.random()),
+  heroPhotoId:heroPhoto?heroPhoto.id:null,
+  hero:{x:hero.x,y:hero.y,w:hero.w,h:hero.h},
+  slotPhoto:{},
+  layerRects:{},
+  layerData:layerData.map(l=>({...l})),
+  title:titleInput?titleInput.value:'',
+  subtitle:subtitleInput?subtitleInput.value:'',
+  selectedTemplateId:null
+ };
+ SUPPORT_SLOTS.forEach(slotId=>{
+  const st=slotPhoto[slotId];
+  const photo=st.src?photos.find(p=>p.src===st.src):null;
+  page.slotPhoto[slotId]={photoId:photo?photo.id:null,x:st.x,y:st.y,w:st.w,h:st.h}
+ });
+ ['heroLayer',...SUPPORT_SLOTS,'titleLayer','subtitleLayer'].forEach(id=>{
+  const r=getRect(id);
+  page.layerRects[id]={x:r.x,y:r.y,w:r.w,h:r.h}
+ });
+ const supportCount=SUPPORT_SLOTS.filter(id=>page.slotPhoto[id].photoId).length;
+ const factoryDefinition=getFactoryDefinition(FactoryManager.active?FactoryManager.active[1]:null);
+ page.selectedTemplateId=TemplateSelector.select({factoryDefinition,contentModel:{heroPhotoId:page.heroPhotoId,supportingPhotoIds:new Array(supportCount).fill(null)}});
+ return page
+}
+function saveActivePageState(){
+ if(!project.pages.length)return;
+ project.pages[project.activePageIndex]=serializeActivePage()
+}
+function loadPageState(pageIndex){
+ const page=project.pages[pageIndex];
+ if(!page)return;
+ project.activePageIndex=pageIndex;
+
+ const heroPhoto=page.heroPhotoId?photos.find(p=>p.id===page.heroPhotoId):null;
+ heroIndex=heroPhoto?photos.findIndex(p=>p.id===heroPhoto.id):null;
+ if(heroPhoto){
+  hero={x:page.hero.x,y:page.hero.y,w:page.hero.w,h:page.hero.h,src:heroPhoto.src};
+  heroImg.src=heroPhoto.src;
+  updateHero()
+ }else{
+  clearSlot('heroLayer')
+ }
+
+ SUPPORT_SLOTS.forEach(slotId=>{
+  const saved=page.slotPhoto[slotId];
+  const photo=saved&&saved.photoId?photos.find(p=>p.id===saved.photoId):null;
+  if(photo){
+   slotPhoto[slotId]={x:saved.x,y:saved.y,w:saved.w,h:saved.h,src:photo.src};
+   const img=getEl(slotId.replace('Layer','Img'));
+   if(img)img.src=photo.src;
+   updateSlotImage(slotId)
+  }else{
+   clearSlot(slotId)
+  }
+ });
+
+ ['heroLayer',...SUPPORT_SLOTS,'titleLayer','subtitleLayer'].forEach(id=>{
+  const r=page.layerRects[id];
+  if(r)setRect(id,r)
+ });
+
+ layerData.length=0;
+ page.layerData.forEach(l=>layerData.push({...l}));
+ layerData.forEach(l=>{
+  const el=getEl(l.id);
+  if(!el)return;
+  el.classList.toggle('hidden',!!l.hidden);
+  el.classList.toggle('locked',!!l.locked);
+  el.style.transform='rotate('+(l.rotation||0)+'deg)';
+  el.style.opacity=l.opacity!=null?l.opacity:1;
+  el.style.zIndex=l.z
+ });
+
+ titleInput.value=page.title||'';
+ subtitleInput.value=page.subtitle||'';
+ updateText();
+
+ selectLayer('heroLayer',false);
+ renderQueue();
+ renderLayers();
+ syncProps();
+ updateStatusBar();
+ renderPageList()
+}
+function switchToPage(pageIndex){
+ if(pageIndex<0||pageIndex>=project.pages.length)return;
+ if(pageIndex===project.activePageIndex){loadPageState(pageIndex);return}
+ saveActivePageState();
+ loadPageState(pageIndex)
+}
+function nextPage(){switchToPage(project.activePageIndex+1)}
+function prevPage(){switchToPage(project.activePageIndex-1)}
+function createBlankPage(){
+ const f=FactoryManager.active||FactoryManager.factories[0];
+ return {
+  id:Date.now()+Math.random(),
+  heroPhotoId:null,
+  hero:{x:0,y:0,w:420,h:522},
+  slotPhoto:{
+   support1Layer:{photoId:null,x:0,y:0,w:0,h:0},
+   support2Layer:{photoId:null,x:0,y:0,w:0,h:0},
+   support3Layer:{photoId:null,x:0,y:0,w:0,h:0},
+   support4Layer:{photoId:null,x:0,y:0,w:0,h:0}
+  },
+  layerRects:{
+   heroLayer:{x:0,y:0,w:420,h:522},
+   support1Layer:{x:0,y:0,w:0,h:0},
+   support2Layer:{x:0,y:0,w:0,h:0},
+   support3Layer:{x:0,y:0,w:0,h:0},
+   support4Layer:{x:0,y:0,w:0,h:0},
+   titleLayer:{x:24,y:585,w:360,h:44},
+   subtitleLayer:{x:24,y:666,w:360,h:28}
+  },
+  layerData:[
+   {id:'heroLayer',name:'Hero Photo Area',type:'Photo Frame',locked:false,hidden:false,rotation:0,opacity:1,z:1},
+   {id:'support1Layer',name:'Support Photo 1',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:2},
+   {id:'support2Layer',name:'Support Photo 2',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:3},
+   {id:'support3Layer',name:'Support Photo 3',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:4},
+   {id:'support4Layer',name:'Support Photo 4',type:'Photo Frame',locked:false,hidden:true,rotation:0,opacity:1,z:5},
+   {id:'titleLayer',name:'Title',type:'Text',locked:false,hidden:false,rotation:0,opacity:1,z:10},
+   {id:'subtitleLayer',name:'Subtitle',type:'Text',locked:false,hidden:false,rotation:0,opacity:1,z:11}
+  ],
+  title:f?f[3]:'',
+  subtitle:f?('Official Locked Mode · '+f[4]):'',
+  selectedTemplateId:'template-1'
+ }
+}
+function addPage(){
+ saveActivePageState();
+ const page=createBlankPage();
+ project.pages.splice(project.activePageIndex+1,0,page);
+ loadPageState(project.activePageIndex+1)
+}
+function duplicatePage(){
+ saveActivePageState();
+ const source=project.pages[project.activePageIndex];
+ const clone={
+  id:Date.now()+Math.random(),
+  heroPhotoId:source.heroPhotoId,
+  hero:{...source.hero},
+  slotPhoto:{},
+  layerRects:{},
+  layerData:source.layerData.map(l=>({...l})),
+  title:source.title,
+  subtitle:source.subtitle,
+  selectedTemplateId:source.selectedTemplateId
+ };
+ SUPPORT_SLOTS.forEach(id=>{clone.slotPhoto[id]={...source.slotPhoto[id]}});
+ ['heroLayer',...SUPPORT_SLOTS,'titleLayer','subtitleLayer'].forEach(id=>{clone.layerRects[id]={...source.layerRects[id]}});
+ project.pages.splice(project.activePageIndex+1,0,clone);
+ loadPageState(project.activePageIndex+1)
+}
+function deletePage(pageIndex){
+ if(project.pages.length<=1)return;
+ if(!confirm('Delete this page?'))return;
+ project.pages.splice(pageIndex,1);
+ const newIndex=Math.min(pageIndex,project.pages.length-1);
+ loadPageState(newIndex)
+}
+function escapeHtml(s){
+ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+
+function renderPageList(){
+ const el=getEl('pageList');
+ if(!el)return;
+
+ el.innerHTML=project.pages.map((page,i)=>{
+  const active=i===project.activePageIndex;
+  const title=(page.title&&page.title.trim())
+    ? page.title.trim()
+    : ('Page '+(i+1));
+
+  const heroText=page.heroPhotoId!=null
+    ? 'Hero set'
+    : 'No hero';
+
+  const visibleLayers=
+    Array.isArray(page.layerData)
+      ? page.layerData.filter(l=>!l.hidden).length
+      : 0;
+
+  return '<div class="pageCard'+(active?' active':'')+'" onclick="switchToPage('+i+')"><div class="pageThumb">'+(i+1)+'</div><div class="pageInfo"><div class="pageTitle">'+escapeHtml(title)+'</div><div class="pageMeta">'+heroText+' · '+visibleLayers+' layers</div></div></div>';
+ }).join('');
+
+ const delBtn=getEl('deletePageBtn');
+ if(delBtn)delBtn.disabled=project.pages.length<=1;
+}
+
 function setZoom(v){zoom=v;canvasWrap.style.transform=`scale(${zoom/100})`;updateStatusBar()}
 function updateStatusBar(){if(!document.getElementById('sbCanvas'))return;sbCanvas.textContent='1080 × 1920';sbZoom.textContent=zoom+'%';sbSelected.textContent=currentLayer()?currentLayer().name:'None';sbLayers.textContent=layerData.length;sbPhotos.textContent=photos.length}
 
@@ -607,6 +1079,24 @@ function drawHero(ctx,scale){
  ctx.clip();
  const ix=-frame.w*scale/2+hero.x*scale,iy=-frame.h*scale/2+hero.y*scale;
  ctx.drawImage(heroImg,ix,iy,hero.w*scale,hero.h*scale);
+ ctx.restore()
+}
+function drawSupportSlot(ctx,scale,slotId){
+ const l=layerData.find(x=>x.id===slotId);
+ const st=slotPhoto[slotId];
+ const img=getEl(slotId.replace('Layer','Img'));
+ if(!st.src||!img||l.hidden)return;
+ const frame=getRect(slotId);
+ ctx.save();
+ const fcx=(frame.x+frame.w/2)*scale,fcy=(frame.y+frame.h/2)*scale;
+ ctx.translate(fcx,fcy);
+ ctx.rotate((l.rotation||0)*Math.PI/180);
+ ctx.globalAlpha=l.opacity!=null?l.opacity:1;
+ ctx.beginPath();
+ ctx.rect(-frame.w*scale/2,-frame.h*scale/2,frame.w*scale,frame.h*scale);
+ ctx.clip();
+ const ix=-frame.w*scale/2+st.x*scale,iy=-frame.h*scale/2+st.y*scale;
+ ctx.drawImage(img,ix,iy,st.w*scale,st.h*scale);
  ctx.restore()
 }
 function drawGradientOverlay(ctx,scale){
@@ -662,7 +1152,7 @@ function exportPNG(){
   if(l.hidden)return;
   if(l.id==='heroLayer'){drawHero(ctx,SCALE);drawGradientOverlay(ctx,SCALE)}
   else if(l.id==='titleLayer'||l.id==='subtitleLayer')drawTextLayer(ctx,SCALE,l.id)
-  /* support slots intentionally not drawn yet - auto-layout phase only, export not in scope */
+  else if(SUPPORT_SLOTS.includes(l.id))drawSupportSlot(ctx,SCALE,l.id)
  });
  downloadCanvasAsPNG(cvs,exportFilename())
 }
