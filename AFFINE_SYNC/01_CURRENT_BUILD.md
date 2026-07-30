@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Build ID | BUILD-2026.07.30-hero-position-diag |
-| Objective | Diagnose and fix the root cause of hero-photo mispositioning on multi-page `buildAIDraft()`-generated projects |
-| Scope | `buildAIDraft()`, `renderComposition()`, `applySlotPhoto()`/`loadHero()`/`fitHeroToFrame()`, `serializeActivePage()` in `OCF_START.html` |
-| Acceptance criteria | 1. Root cause identified via live-browser diagnosis. 2. Smallest safe fix implemented. 3. Verified: hero geometry/identity correct on pages 1-3, multi-page navigation, save/reopen, and PNG export (incl. support slots). 4. `[diag]` logging removed once proven. All met. |
-| Files expected to change | `OCF_START.html` only — `js/app.js`/`index.html` do not have the `buildAIDraft()`/multi-page Pages feature, so BUG-001 does not reproduce there (confirmed by inspection; out of scope, not touched) |
+| Build ID | BUILD-2026.07.30-automation-pipeline |
+| Objective | Implement the locked core automation pipeline (Upload Photos + Paste Event Text → fully automatic draft) that a real-user test found largely missing, tracked as BUG-002 |
+| Scope | `extractEventInfo`, `parsePastedText`, `buildContentModel`, `planPages`, `serializeActivePage`, `buildAIDraft`, `generateFacebookCaption`, `generateTikTokCaption`, `exportAllPages`, `updateText`, `clearSlot`, plus the Event Details/caption review UI — all in `OCF_START.html` |
+| Acceptance criteria | Full one-click flow passes with real photos and real event text: Upload Photos → Paste Event Text → Build AI Draft → automatic extraction/hero selection/photo distribution/multi-page generation/title-subtitle assignment/date-location-department extraction/Facebook caption/TikTok caption → editorial review (edit anything) → Save/Reopen → Export Current Page → Export All Pages. All met — see `05_TEST_RESULTS.md`. |
+| Files expected to change | `OCF_START.html` only |
 | Build status | **COMPLETE** |
-| Start date | 2026-07-29 |
+| Start date | 2026-07-30 |
 | Completion date | 2026-07-30 |

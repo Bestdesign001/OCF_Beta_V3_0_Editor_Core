@@ -13,3 +13,26 @@
 | Export PNG: hero + support slots (page 1, template-5) | Exported canvas shows the correct hero photo and all 4 correct support photos, no exceptions | Hero pixel sample = photo's true color; all 4 support-slot pixel samples matched their correct photos; 7 layers drawn, 0 exceptions | PASS | Pixel sampling via `getImageData` on an off-screen canvas built the same way `exportPNG()` does | None |
 | Export PNG: real `exportPNG()` call on all 3 pages | No exceptions on any page | 0/3 threw | PASS | Live JS inspection | None |
 | Console errors during full test run | No uncaught errors/exceptions | None found | PASS | `read_console_messages` (error filter) | None |
+
+## BUG-002 acceptance flow (locked automation pipeline)
+Verified live with real uploaded photos (10 real PNG files via the actual `#photoInput` file input) and a real structured event-text paste. Note on method: real OS-level mouse clicks were unreliable in this session's browser-automation environment (tabs repeatedly opened without OS window focus, confirmed by attaching raw `mousedown`/`click` listeners to the page and observing zero events on click — a tooling limitation, not an app defect); button/element `.click()` and real `dispatchEvent(new Event(...))` calls were used instead, which exercise the actual `onclick`/`oninput` handlers and DOM, just without OS input routing. Genuine file uploads and JSON-round-trip save/reopen are unaffected by this.
+
+| Step | Result | Evidence |
+|---|---|---|
+| Upload Photos | PASS | 10 real files via `file_upload` to `#photoInput`; `photos.length===10` |
+| Photo Queue | PASS | All 10 rendered with correct names/order |
+| Automatic hero selection | PASS | `recomputeHeroScores()` → `recommendedHeroId` set correctly |
+| Automatic text extraction (Date/Time/Location/Department/Activity/Result/Public Information/Closing) | PASS | Real structured paste → `eventInfo` matched every field exactly |
+| Automatic photo distribution | PASS | 10/10 photos assigned across pages, 0 unused; "unused with reason" path separately verified with a synthetic 30-photo overflow (14 correctly flagged, reason present) |
+| Automatic multi-page generation (Cover/Activity/Results/Public Information/Closing) | PASS | 5 pages generated, section/type/title/subtitle correct on each |
+| Automatic title/subtitle per page | PASS (was FAIL until fixed) | `serializeActivePage()` was reading the global title input, so every page showed the cover's title; fixed to read the rendered layer text |
+| Automatic Facebook caption | PASS | Paragraph style, no emojis, only extracted fields |
+| Automatic TikTok caption | PASS | Shorter + hashtags from extracted fields only (fixed a punctuation bug in hashtag sanitization) |
+| Editorial review (edit anything afterward) | PASS | All new Event Details fields and both captions are live editable inputs/textareas |
+| Multi-page navigation | PASS | 7/7 navigation steps across all 5 pages matched saved state |
+| Save/Reopen (JSON round-trip) | PASS | All 5 pages reloaded with correct title, hero photo, and geometry |
+| Export Current Page | PASS | No exceptions |
+| Export All Pages | PASS (was MISSING until implemented) | 5 distinct filenames produced, original active page restored afterward |
+| Delete Page | PASS | Verified via `window.confirm` override (real users see a normal native dialog; this only works around the automation tooling being unable to click a native dialog) |
+| Hero/support photo geometry (BUG-001 regression check) | PASS | All page hero geometries finite; no-hero pages correctly show the harmless default (no photo to fit) |
+| Console errors during full BUG-002 test run | PASS | None found |
