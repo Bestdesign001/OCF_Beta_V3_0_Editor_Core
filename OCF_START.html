@@ -44,13 +44,13 @@
 <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handlePhotos(event)">
 <main id="dashboardScreen" class="screen"><section class="header"><div><h1>QueenRay Official Factory Dashboard</h1><p>Editor Core connects Photo Queue, Canvas, Layers, Transform and Export.</p></div><div class="status">SYSTEM STATUS: PASS</div></section><section class="grid"><div class="card" id="factoryOverviewPanel"><h2>Factory Overview</h2><div id="factoryGrid" class="factoryGrid"></div></div><div class="card"><h2>System Status</h2><div class="panel">Foundation: <b id="foundationStatus">CHECKING</b></div><div class="panel">CSS Loaded: <b id="cssStatus">CHECKING</b></div><div class="panel">JavaScript Loaded: <b id="jsStatus">CHECKING</b></div><div class="panel">Screen Router: <b id="routerStatus">CHECKING</b></div><div class="panel">Official Locked Mode: <b>ON</b></div><h2>Recent Projects</h2><div class="projectRow"><div><b>No saved projects yet</b><div class="small">Projects aren't saved between sessions in this beta</div></div><button class="btn light" disabled title="No saved projects yet">Open</button></div></div></section></main>
 <main id="workspaceScreen" class="screen"><div class="workspaceTop"><div><b id="activeFactoryName">Greeting Factory</b><span id="activeFactoryDesc">Official greeting poster workflow</span></div><div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button><button class="btn gold" onclick="exportPNG()">Export PNG</button></div></div><div class="workflowTop"><span onclick="menuUploadPhotos()">Upload Photos</span><span onclick="menuPhotoQueue()">Photo Queue</span><span onclick="menuChooseHero()">Choose Hero</span><span onclick="menuCanvas()">Canvas</span><span onclick="menuTransform()">Transform</span><span onclick="menuLayers()">Layers</span><span onclick="menuExport()">Export</span></div>
-<div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="pasteHeading">Paste Text</h3><textarea id="pasteTextInput" placeholder="Paste WhatsApp or other text here" oninput="capturePastedText()"></textarea><div id="pasteDetected" class="small"></div><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="heroAnalysisHeading">Hero Analysis</h3><div id="heroAnalysisPanel" class="small">Upload photos to see analysis.</div><div id="buildDraftPanel" class="small">Upload photos to build a draft.</div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
+<div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="pasteHeading">Paste Text</h3><textarea id="pasteTextInput" placeholder="Paste WhatsApp or other text here" oninput="capturePastedText()"></textarea><div id="pasteDetected" class="small"></div><h3 id="eventInfoHeading">Event Details (Auto-Extracted)</h3><div class="panel propGrid"><label>Date<input id="eventDateInput" oninput="updateEventInfoField('date',this.value)"></label><label>Time<input id="eventTimeInput" oninput="updateEventInfoField('time',this.value)"></label><label>Location<input id="eventLocationInput" oninput="updateEventInfoField('location',this.value)"></label><label>Department<input id="eventDepartmentInput" oninput="updateEventInfoField('department',this.value)"></label></div><label>Activity<textarea id="eventActivityInput" oninput="updateEventInfoField('activity',this.value)"></textarea></label><label>Result<textarea id="eventResultInput" oninput="updateEventInfoField('result',this.value)"></textarea></label><label>Public Information<textarea id="eventPublicInfoInput" oninput="updateEventInfoField('publicInfo',this.value)"></textarea></label><label>Closing Message<textarea id="eventClosingInput" oninput="updateEventInfoField('closing',this.value)"></textarea></label><h3 id="captionsHeading">Facebook Caption</h3><textarea id="facebookCaptionOutput" oninput="markCaptionEdited(this)"></textarea><h3>TikTok Caption</h3><textarea id="tiktokCaptionOutput" oninput="markCaptionEdited(this)"></textarea><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="heroAnalysisHeading">Hero Analysis</h3><div id="heroAnalysisPanel" class="small">Upload photos to see analysis.</div><div id="buildDraftPanel" class="small">Upload photos to build a draft.</div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
 <aside class="pagePanel"><h3 id="pagesHeading">Pages</h3><div id="pageList"></div><button class="btn gold" onclick="addPage()">Add Page</button><button class="btn light" onclick="duplicatePage()">Duplicate Page</button><button class="btn red" id="deletePageBtn" onclick="deletePage(project.activePageIndex)">Delete Page</button><button class="btn light" onclick="prevPage()">◀ Prev Page</button><button class="btn light" onclick="nextPage()">Next Page ▶</button></aside>
 <section class="center" id="canvasSection"><div id="canvasWrap" class="canvasWrap"><div class="canvas" id="canvas"><div id="heroLayer" class="layerObj" style="z-index:1" onmousedown="heroPointerDown(event)" ondblclick="replaceHeroPhoto()"><span class="placeholder">Hero Photo Area</span><img id="heroImg" draggable="false"><div class="handle h-br" onmousedown="resizePointerDown(event)"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support1Layer" class="layerObj slotLayer hidden" style="z-index:2" onmousedown="objectDown(event,'support1Layer')"><span class="placeholder">Photo</span><img id="support1Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support2Layer" class="layerObj slotLayer hidden" style="z-index:3" onmousedown="objectDown(event,'support2Layer')"><span class="placeholder">Photo</span><img id="support2Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support3Layer" class="layerObj slotLayer hidden" style="z-index:4" onmousedown="objectDown(event,'support3Layer')"><span class="placeholder">Photo</span><img id="support3Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support4Layer" class="layerObj slotLayer hidden" style="z-index:5" onmousedown="objectDown(event,'support4Layer')"><span class="placeholder">Photo</span><img id="support4Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div class="grad" style="z-index:7"></div><div id="titleLayer" class="layerObj" style="z-index:10" onmousedown="objectDown(event,'titleLayer')" ondblclick="editTextLayer('titleLayer')">OFFICIAL GREETING POSTER<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="subtitleLayer" class="layerObj" style="z-index:11" onmousedown="objectDown(event,'subtitleLayer')" ondblclick="editTextLayer('subtitleLayer')">Official Locked Mode · Auto Layout Preview<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="guideV" class="guide guideV"></div><div id="guideH" class="guide guideH"></div></div></div></section>
 <aside class="right"><h3>Status</h3><div class="statusLine">Selected Count: <b id="selectedCountStatus">1</b></div><div class="statusLine">Object Type: <b id="objectTypeStatus">Photo Frame</b></div><div class="statusLine">Current Layer: <b id="currentLayerStatus">Hero Photo Area</b></div><div class="statusLine">Selected Object: <b id="selectedStatus">None</b></div><div class="statusLine">Canvas Size: <b id="canvasSizeStatus">1080 × 1920</b></div><div class="statusLine">Total Photos: <b id="totalPhotosStatus">0</b></div><div class="statusLine">Hero Photo: <b id="heroNameStatus">None</b></div>
 <h3 id="transformHeading">Object Transform</h3><div class="panel propGrid"><label>X<input id="propX" type="number" oninput="applyProps()"></label><label>Y<input id="propY" type="number" oninput="applyProps()"></label><label>Width<input id="propW" type="number" oninput="applyProps()"></label><label>Height<input id="propH" type="number" oninput="applyProps()"></label><label>Rotation<input id="propRot" type="number" oninput="applyProps()"></label><label>Opacity %<input id="propOpacity" type="number" min="0" max="100" oninput="applyProps()"></label></div>
 <h3>Align / Arrange</h3><button class="btn light" onclick="align('left')">Left</button><button class="btn light" onclick="align('center')">Center</button><button class="btn light" onclick="align('right')">Right</button><button class="btn light" onclick="align('top')">Top</button><button class="btn light" onclick="align('middle')">Middle</button><button class="btn light" onclick="align('bottom')">Bottom</button><br><button class="btn light" onclick="bringForward()">Forward</button><button class="btn light" onclick="sendBackward()">Backward</button><button class="btn light" onclick="bringFront()">Front</button><button class="btn light" onclick="sendBack()">Back</button>
-<h3>Properties</h3><label>Rename Layer</label><input id="renameLayerInput"><button class="btn gold" onclick="renameLayer()">Rename</button><div class="panel"><label>Title</label><textarea id="titleInput" oninput="updateText()">OFFICIAL GREETING POSTER</textarea><label>Subtitle</label><textarea id="subtitleInput" oninput="updateText()">Official Locked Mode · Greeting Classic</textarea></div><h3>Zoom</h3><button class="btn light" onclick="setZoom(50)">50%</button><button class="btn light" onclick="setZoom(75)">75%</button><button class="btn light" onclick="setZoom(100)">100%</button><h3 id="exportHeading">Export</h3><button class="btn gold" onclick="exportPNG()">Export PNG</button><h3>Official Locked Mode</h3><div class="panel lockList"><label><input type="checkbox" checked disabled> Photo Lock</label><label><input type="checkbox" checked disabled> Logo Lock</label><label><input type="checkbox" checked disabled> Face Lock</label><label><input type="checkbox" checked disabled> Original Photo Mode</label></div></aside>
+<h3>Properties</h3><label>Rename Layer</label><input id="renameLayerInput"><button class="btn gold" onclick="renameLayer()">Rename</button><div class="panel"><label>Title</label><textarea id="titleInput" oninput="updateText()">OFFICIAL GREETING POSTER</textarea><label>Subtitle</label><textarea id="subtitleInput" oninput="updateText()">Official Locked Mode · Greeting Classic</textarea></div><h3>Zoom</h3><button class="btn light" onclick="setZoom(50)">50%</button><button class="btn light" onclick="setZoom(75)">75%</button><button class="btn light" onclick="setZoom(100)">100%</button><h3 id="exportHeading">Export</h3><button class="btn gold" onclick="exportPNG()">Export PNG</button><button class="btn light" onclick="exportAllPages()">Export All Pages</button><h3>Official Locked Mode</h3><div class="panel lockList"><label><input type="checkbox" checked disabled> Photo Lock</label><label><input type="checkbox" checked disabled> Logo Lock</label><label><input type="checkbox" checked disabled> Face Lock</label><label><input type="checkbox" checked disabled> Original Photo Mode</label></div></aside>
 </div><div class="statusBar">Canvas: <b id="sbCanvas">1080 × 1920</b> Zoom: <b id="sbZoom">100%</b> Selected: <b id="sbSelected">None</b> Layers: <b id="sbLayers">0</b> Photos: <b id="sbPhotos">0</b></div></main>
 <script>
 const ScreenRouter={current:null,screens:{},init(){this.screens={dashboard:document.getElementById('dashboardScreen'),workspace:document.getElementById('workspaceScreen')};this.showScreen('dashboard')},showScreen(name){Object.keys(this.screens).forEach(k=>{const s=this.screens[k];s.classList.toggle('active',k===name);s.setAttribute('aria-hidden',k===name?'false':'true')});this.current=name;updateStatusBar()}};
@@ -190,7 +190,8 @@ function renderQueue(){
  photos.forEach((p,i)=>{
   const item=document.createElement('div');
   item.className='photoItem'+(i===heroIndex?' hero':'')+(p.src?'':' loading');
-  item.innerHTML=`<div class="photoThumb" style="${p.src?`background-image:url('${p.src}')`:''}">${p.src?'':'…'}</div><div><div class="photoName">${p.name} ${i===heroIndex?'<span class="heroBadge">HERO</span>':''}</div><div class="photoMeta">${p.src?('Order '+(i+1)):'Loading…'}</div></div><div class="photoActions"><button class="miniBtn gold">Hero</button><button class="miniBtn light">Rename</button><button class="miniBtn red">Delete</button></div>`;
+  const unused=lastUnassignedPhotos.find(u=>u.id===p.id);
+  item.innerHTML=`<div class="photoThumb" style="${p.src?`background-image:url('${p.src}')`:''}">${p.src?'':'…'}</div><div><div class="photoName">${p.name} ${i===heroIndex?'<span class="heroBadge">HERO</span>':''}</div><div class="photoMeta">${p.src?('Order '+(i+1)):'Loading…'}</div>${unused?'<div class="photoMeta" style="color:#dc2626;font-weight:800">Unused: '+unused.reason+'</div>':''}</div><div class="photoActions"><button class="miniBtn gold">Hero</button><button class="miniBtn light">Rename</button><button class="miniBtn red">Delete</button></div>`;
   item.onclick=()=>setHero(i);
   item.querySelectorAll('button')[0].onclick=e=>{e.stopPropagation();setHero(i)};
   item.querySelectorAll('button')[1].onclick=e=>{e.stopPropagation();renamePhoto(i)};
@@ -316,32 +317,52 @@ function buildContentModel(){
   overflowPhotoIds:others.slice(SUPPORT_SLOTS.length).map(p=>p.id),
   title:titleInput?titleInput.value:'',
   subtitle:subtitleInput?subtitleInput.value:'',
+  eventInfo:eventInfo,
   photos:photoModels
  }
 }
 function findPhotoById(photoId){return photos.find(p=>p.id===photoId)}
 
-/* ---- Pure page planner: Content Model -> ordered plain-data page plan. No DOM access, no rendering, no template/layout logic, deterministic. Always returns at least one page (cover). ---- */
+/* ---- Content-driven sections for automatic multi-page generation, in the order specified by the locked MPS Content Factory workflow. ---- */
+const CONTENT_SECTIONS=[
+ {key:'activity',label:'Activity'},
+ {key:'result',label:'Results'},
+ {key:'publicInfo',label:'Public Information'},
+ {key:'closing',label:'Closing'}
+];
+/* ---- Photos that could not be placed on an automatically generated page (capacity exceeded), with a reason. Read by renderQueue() to surface this to the user. ---- */
+let lastUnassignedPhotos=[];
+
+/* ---- Pure page planner: Content Model -> ordered plain-data page plan. No DOM access, no rendering, no template/layout logic, deterministic. Always returns at least one page (cover). Non-cover pages are created per CONTENT_SECTIONS, skipped only when a section has neither extracted text nor a photo left to place ("generate fewer pages" when content is insufficient). Automatic layout is capped at Cover + CONTENT_SECTIONS.length pages; any photo left over past that cap is reported in lastUnassignedPhotos rather than silently dropped. ---- */
 function planPages(contentModel){
  const pages=[];
  pages.push({
   type:'cover',
+  section:'cover',
   heroPhotoId:contentModel.heroPhotoId,
   supportingPhotoIds:contentModel.supportingPhotoIds.slice(0,SUPPORT_SLOTS.length),
   title:contentModel.title,
   subtitle:contentModel.subtitle
  });
- const overflow=contentModel.overflowPhotoIds||[];
- for(let i=0;i<overflow.length;i+=SUPPORT_SLOTS.length){
-  const chunk=overflow.slice(i,i+SUPPORT_SLOTS.length);
+ const overflow=(contentModel.overflowPhotoIds||[]).slice();
+ const info=contentModel.eventInfo||{};
+ let idx=0;
+ CONTENT_SECTIONS.forEach(section=>{
+  const sectionText=info[section.key]||'';
+  const hasPhotosLeft=idx<overflow.length;
+  if(!sectionText&&!hasPhotosLeft)return;
+  const chunk=overflow.slice(idx,idx+SUPPORT_SLOTS.length);
+  idx+=SUPPORT_SLOTS.length;
   pages.push({
    type:'content',
+   section:section.key,
    heroPhotoId:chunk[0]||null,
    supportingPhotoIds:chunk.slice(1),
-   title:'',
-   subtitle:''
+   title:sectionText?section.label:'',
+   subtitle:sectionText
   })
- }
+ });
+ lastUnassignedPhotos=overflow.slice(idx).map(id=>({id,reason:'Automatic layout is limited to Cover + '+CONTENT_SECTIONS.length+' content pages (Activity/Results/Public Information/Closing). Add more event detail text or place this photo on a manually added page.'}));
  return pages
 }
 
@@ -461,6 +482,7 @@ function applySlotPhoto(slotId,src,photo){
 function clearSlot(slotId){
  if(slotId==='heroLayer'){
   hero={x:0,y:0,w:420,h:522,src:null};
+  heroIndex=null;
   heroImg.removeAttribute('src');
   updateHero()
  }else{
@@ -474,14 +496,22 @@ function clearSlot(slotId){
  }
 }
 const COMPOSITION_TEXT_TO_DOM={title:'titleLayer',subtitle:'subtitleLayer'};
-function applyTextContent(slotId,text){
- const el=getEl(slotId);
+/* ---- Reads/writes only the first text node of a layer, leaving its handle child elements intact - a plain `.textContent=` assignment would delete them. ---- */
+function getLayerText(id){
+ const el=getEl(id);
+ if(!el)return'';
+ for(const node of el.childNodes){if(node.nodeType===3)return node.textContent}
+ return''
+}
+function setLayerText(id,text){
+ const el=getEl(id);
  if(!el)return;
  for(const node of el.childNodes){
   if(node.nodeType===3){node.textContent=text;return}
  }
  el.insertBefore(document.createTextNode(text),el.firstChild)
 }
+function applyTextContent(slotId,text){setLayerText(slotId,text)}
 function renderComposition(composition){
  clearSlot('heroLayer');
  const usedSlots=new Set();
@@ -610,17 +640,102 @@ function editTextLayer(id){
  const input=id==='titleLayer'?titleInput:subtitleInput;
  input.focus();input.select()
 }
-function updateText(){titleLayer.textContent=titleInput.value;subtitleLayer.textContent=subtitleInput.value}
-function capturePastedText(){pastedText=pasteTextInput.value;parsePastedText()}
-function parsePastedText(){
- const lines=pastedText.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
- const title=lines[0]||'';
- const subtitle=lines.slice(1).join(' ');
- titleInput.value=title;
- subtitleInput.value=subtitle;
- updateText();
- pasteDetected.textContent='Detected Title: '+(title||'(none)')+' | Detected Subtitle: '+(subtitle||'(none)')
+function updateText(){
+ setLayerText('titleLayer',titleInput.value);
+ setLayerText('subtitleLayer',subtitleInput.value);
+ eventInfo.title=titleInput.value;
+ eventInfo.subtitle=subtitleInput.value;
+ regenerateCaptions()
 }
+function capturePastedText(){pastedText=pasteTextInput.value;parsePastedText()}
+
+/* ---- Automatic text extraction: locked core requirement, not an optional feature. Supports labelled text
+   (Tarikh/Lokasi/Tempat/Jabatan/Bahagian/Unit/Masa/Aktiviti and English equivalents) and falls back to
+   positional inference (first/second unlabelled line -> title/subtitle) plus pattern matching (date/time)
+   for unstructured text. Never invents a value: a field that cannot be determined stays ''. ---- */
+const EVENT_FIELD_LABELS={
+ date:['tarikh','date'],
+ time:['masa','time'],
+ location:['lokasi','tempat','location','venue'],
+ department:['jabatan','bahagian','unit','department'],
+ activity:['aktiviti','activity','program'],
+ result:['result','keputusan','hasil'],
+ publicInfo:['maklumat','notis','notice','makluman'],
+ closing:['penutup','closing','kesimpulan','ucapan']
+};
+const EVENT_DATE_PATTERN=/\b\d{1,2}\s+(Januari|Februari|Mac|April|Mei|Jun|Julai|Ogos|September|Oktober|November|Disember|January|February|March|May|June|July|August|October|December)\s+\d{4}\b|\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/i;
+const EVENT_TIME_PATTERN=/\b\d{1,2}[:.]\d{2}\s*(am|pm|pagi|petang|malam)?\b/i;
+let eventInfo={title:'',subtitle:'',summary:'',date:'',time:'',location:'',department:'',activity:'',result:'',publicInfo:'',closing:''};
+
+function extractEventInfo(text){
+ const lines=(text||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+ const info={title:'',subtitle:'',summary:'',date:'',time:'',location:'',department:'',activity:'',result:'',publicInfo:'',closing:''};
+ const unlabeled=[];
+ lines.forEach(line=>{
+  let matched=false;
+  for(const field in EVENT_FIELD_LABELS){
+   if(info[field])continue;
+   for(const label of EVENT_FIELD_LABELS[field]){
+    const m=line.match(new RegExp('^'+label+'\\s*[:\\-]\\s*(.+)$','i'));
+    if(m){info[field]=m[1].trim();matched=true;break}
+   }
+   if(matched)break
+  }
+  if(!matched)unlabeled.push(line)
+ });
+ if(!info.date){for(const line of unlabeled){const m=line.match(EVENT_DATE_PATTERN);if(m){info.date=m[0];break}}}
+ if(!info.time){for(const line of unlabeled){const m=line.match(EVENT_TIME_PATTERN);if(m){info.time=m[0];break}}}
+ if(unlabeled.length){
+  info.title=unlabeled[0];
+  info.subtitle=unlabeled.length>1?unlabeled[1]:'';
+  info.summary=unlabeled.length>2?unlabeled.slice(2).join(' '):''
+ }
+ return info
+}
+function parsePastedText(){
+ eventInfo=extractEventInfo(pastedText);
+ titleInput.value=eventInfo.title;
+ subtitleInput.value=eventInfo.subtitle;
+ updateText();
+ syncEventInfoInputs();
+ regenerateCaptions();
+ pasteDetected.textContent='Detected Title: '+(eventInfo.title||'(none)')+' | Subtitle: '+(eventInfo.subtitle||'(none)')+' | Date: '+(eventInfo.date||'(none)')+' | Time: '+(eventInfo.time||'(none)')+' | Location: '+(eventInfo.location||'(none)')+' | Department: '+(eventInfo.department||'(none)')
+}
+function syncEventInfoInputs(){
+ const map={eventDateInput:'date',eventTimeInput:'time',eventLocationInput:'location',eventDepartmentInput:'department',eventActivityInput:'activity',eventResultInput:'result',eventPublicInfoInput:'publicInfo',eventClosingInput:'closing'};
+ for(const id in map){const el=getEl(id);if(el)el.value=eventInfo[map[id]]||''}
+}
+function updateEventInfoField(field,value){eventInfo[field]=value;regenerateCaptions()}
+
+/* ---- Caption generation: official tone, paragraphs, no emojis, uses only extracted/edited eventInfo fields - never invents facts not present in eventInfo. Regenerated whenever eventInfo changes, unless the user has manually edited a caption (tracked via dataset.userEdited). ---- */
+function generateFacebookCaption(info){
+ const lines=[];
+ if(info.title)lines.push(info.title);
+ if(info.subtitle)lines.push(info.subtitle);
+ const meta=[info.date,info.time,info.location].filter(Boolean);
+ if(meta.length)lines.push(meta.join(' | '));
+ if(info.department)lines.push('Anjuran: '+info.department);
+ [info.summary,info.activity,info.result,info.publicInfo,info.closing].forEach(part=>{if(part)lines.push(part)});
+ return lines.join('\n\n')
+}
+function generateTikTokCaption(info){
+ const lines=[];
+ if(info.title)lines.push(info.title);
+ const meta=[info.date,info.location].filter(Boolean);
+ if(meta.length)lines.push(meta.join(' · '));
+ if(info.summary)lines.push(info.summary);
+ const tags=[];
+ if(info.department)tags.push('#'+info.department.replace(/[^a-zA-Z0-9]+/g,''));
+ if(info.location)tags.push('#'+info.location.replace(/[^a-zA-Z0-9]+/g,''));
+ if(tags.length)lines.push(tags.join(' '));
+ return lines.join('\n')
+}
+function regenerateCaptions(){
+ const fb=getEl('facebookCaptionOutput'),tk=getEl('tiktokCaptionOutput');
+ if(fb&&!fb.dataset.userEdited)fb.value=generateFacebookCaption(eventInfo);
+ if(tk&&!tk.dataset.userEdited)tk.value=generateTikTokCaption(eventInfo)
+}
+function markCaptionEdited(el){el.dataset.userEdited='1'}
 
 /* ---- Hero Analysis: display-only scoring, never assigns Hero. FACE_API_AVAILABLE and HERO_SCORE_MAX are fixed once per session so every photo in every run shares the same ceiling. ---- */
 const FACE_API_AVAILABLE=(typeof window.FaceDetector==='function');
@@ -843,6 +958,8 @@ function buildAIDraft(){
   renderComposition(composition);
   /* TODO(Phase 2.3): renderComposition() never clears heroLayer when contentModel.heroPhotoId is null - not reachable today since planPages() always sets one, but fix if that changes. */
   const page=serializeActivePage();
+  page.type=planEntry.type;
+  page.section=planEntry.section;
   project.pages.push(page)
  });
 
@@ -862,13 +979,15 @@ function serializeActivePage(){
  const existing=project.pages[project.activePageIndex];
  const page={
   id:existing?existing.id:(Date.now()+Math.random()),
+  type:existing?existing.type:'cover',
+  section:existing?existing.section:'cover',
   heroPhotoId:heroPhoto?heroPhoto.id:null,
   hero:{x:hero.x,y:hero.y,w:hero.w,h:hero.h},
   slotPhoto:{},
   layerRects:{},
   layerData:layerData.map(l=>({...l})),
-  title:titleInput?titleInput.value:'',
-  subtitle:subtitleInput?subtitleInput.value:'',
+  title:getLayerText('titleLayer'),
+  subtitle:getLayerText('subtitleLayer'),
   selectedTemplateId:null
  };
  SUPPORT_SLOTS.forEach(slotId=>{
@@ -1053,13 +1172,13 @@ function renderPageList(){
 function setZoom(v){zoom=v;canvasWrap.style.transform=`scale(${zoom/100})`;updateStatusBar()}
 function updateStatusBar(){if(!document.getElementById('sbCanvas'))return;sbCanvas.textContent='1080 × 1920';sbZoom.textContent=zoom+'%';sbSelected.textContent=currentLayer()?currentLayer().name:'None';sbLayers.textContent=layerData.length;sbPhotos.textContent=photos.length}
 
-function exportFilename(){
+function exportFilename(pageLabel){
  const raw=(FactoryManager.active?FactoryManager.active[1]:'OCF_Poster');
  const name=raw.replace(/[^a-z0-9]+/gi,'_');
  const d=new Date();
  const pad=n=>String(n).padStart(2,'0');
  const stamp=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
- return `${name}_${stamp}.png`
+ return `${name}_${stamp}${pageLabel?'_'+pageLabel:''}.png`
 }
 function wrapLines(ctx,text,maxWidth){
  const words=text.split(/\s+/).filter(Boolean);
@@ -1149,7 +1268,7 @@ function downloadCanvasAsPNG(cvs,filename){
   setTimeout(()=>URL.revokeObjectURL(url),2000)
  },'image/png')
 }
-function exportPNG(){
+function renderCurrentPageToCanvas(){
  const EXPORT_W=1080,EXPORT_H=1920,SCALE=EXPORT_W/420;
  const cvs=document.createElement('canvas');
  cvs.width=EXPORT_W;cvs.height=EXPORT_H;
@@ -1161,7 +1280,20 @@ function exportPNG(){
   else if(l.id==='titleLayer'||l.id==='subtitleLayer')drawTextLayer(ctx,SCALE,l.id)
   else if(SUPPORT_SLOTS.includes(l.id))drawSupportSlot(ctx,SCALE,l.id)
  });
- downloadCanvasAsPNG(cvs,exportFilename())
+ return cvs
+}
+function exportPNG(){
+ downloadCanvasAsPNG(renderCurrentPageToCanvas(),exportFilename())
+}
+/* ---- Exports every page in project.pages as a separate PNG, one per page, then restores the page that was active before the export. ---- */
+function exportAllPages(){
+ if(!project.pages.length)return;
+ const originalIndex=project.activePageIndex;
+ project.pages.forEach((page,i)=>{
+  loadPageState(i);
+  downloadCanvasAsPNG(renderCurrentPageToCanvas(),exportFilename('page'+(i+1)))
+ });
+ loadPageState(originalIndex)
 }
 
 window.addEventListener('DOMContentLoaded',()=>{ScreenRouter.init();FactoryManager.render();markPass();renderQueue();setupDropZone();renderLayers();selectLayer('heroLayer',false);updateStatusBar()})
