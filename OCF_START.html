@@ -219,11 +219,18 @@ function deletePhoto(i){
 }
 function updateQueueStatus(){totalPhotosStatus.textContent=photos.length;photoCount.textContent=photos.length+' photo(s)';heroNameStatus.textContent=(heroIndex!==null&&photos[heroIndex])?photos[heroIndex].name:'None'}
 
-function loadHero(src){hero.src=src;heroImg.onload=()=>fitHeroToFrame();heroImg.src=src}
-function fitHeroToFrame(){
+function loadHero(src,knownWidth,knownHeight){
+ hero.src=src;
+ heroImg.onload=()=>fitHeroToFrame();
+ heroImg.src=src;
+ if(knownWidth&&knownHeight)fitHeroToFrame(knownWidth,knownHeight)
+}
+function fitHeroToFrame(knownWidth,knownHeight){
  const frame=getRect('heroLayer');
  const fw=frame.w||420,fh=frame.h||522;
- const fit=calculateCoverFit(heroImg.naturalWidth,heroImg.naturalHeight,fw,fh);
+ const iw=knownWidth||heroImg.naturalWidth,ih=knownHeight||heroImg.naturalHeight;
+ if(!iw||!ih)return;
+ const fit=calculateCoverFit(iw,ih,fw,fh);
  hero.x=fit.x;hero.y=fit.y;hero.w=fit.width;hero.h=fit.height;
  updateHero()
 }
@@ -440,9 +447,13 @@ function applySlotFrame(slotId,frame){
  if(l)l.hidden=false;
  if(el)el.classList.remove('hidden')
 }
-function applySlotPhoto(slotId,src){
+function applySlotPhoto(slotId,src,photo){
  if(slotId==='heroLayer'){
-  if(hero.src!==src)loadHero(src);else fitHeroToFrame()
+  if(photo){
+   const idx=photos.findIndex(p=>p.id===photo.id);
+   if(idx>-1)heroIndex=idx
+  }
+  if(hero.src!==src)loadHero(src,photo&&photo.width,photo&&photo.height);else fitHeroToFrame(photo&&photo.width,photo&&photo.height)
  }else{
   if(slotPhoto[slotId].src!==src)loadSlotImage(slotId,src);else fitSlotToFrame(slotId)
  }
@@ -481,7 +492,7 @@ function renderComposition(composition){
    usedSlots.add(slotId);
    applySlotFrame(slotId,el.frame);
    const photo=findPhotoById(el.photoId);
-   if(photo&&photo.src)applySlotPhoto(slotId,photo.src)
+   if(photo&&photo.src)applySlotPhoto(slotId,photo.src,photo)
   }else if(el.type==='text'){
    const slotId=COMPOSITION_TEXT_TO_DOM[el.id];
    if(!slotId)return;
@@ -829,13 +840,9 @@ function buildAIDraft(){
   project.activePageIndex=i;
   const selectedTemplateId=TemplateSelector.select({factoryDefinition,contentModel:planEntry});
   const composition=LayoutResolver.resolve({selectedTemplateId,contentModel:planEntry,canvas:{width:420,height:522}});
-  console.log('[diag] before renderComposition','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
   renderComposition(composition);
-  console.log('[diag] after renderComposition','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
   /* TODO(Phase 2.3): renderComposition() never clears heroLayer when contentModel.heroPhotoId is null - not reachable today since planPages() always sets one, but fix if that changes. */
-  console.log('[diag] before serializeActivePage','pageIndex',i,'type',planEntry.type,'heroPhotoId',planEntry.heroPhotoId,'supportingPhotoIds',planEntry.supportingPhotoIds,'hero',{x:hero.x,y:hero.y,w:hero.w,h:hero.h},'slotPhoto',SUPPORT_SLOTS.map(id=>({id,x:slotPhoto[id].x,y:slotPhoto[id].y,w:slotPhoto[id].w,h:slotPhoto[id].h})),'t',performance.now());
   const page=serializeActivePage();
-  console.log('[diag] after serializeActivePage','pageIndex',i,'type',planEntry.type,'heroPhotoId',page.heroPhotoId,'slotPhoto',page.slotPhoto,'hero',page.hero,'t',performance.now());
   project.pages.push(page)
  });
 
