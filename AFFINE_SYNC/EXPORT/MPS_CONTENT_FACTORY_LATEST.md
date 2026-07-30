@@ -1,26 +1,32 @@
 ﻿# MPS Content Factory — Latest Update
 
 ## Current Build
-BUILD-2026.07.30-hero-position-diag — Diagnose the root cause of hero-photo mispositioning on page 3 of `buildAIDraft()` output. See AFFINE_SYNC/01_CURRENT_BUILD.md.
+BUILD-2026.07.30-hero-position-diag — Fixed BUG-001: hero photo mispositioned/misidentified across `buildAIDraft()` pages. See AFFINE_SYNC/01_CURRENT_BUILD.md.
 
 ## Build Result
-IN PROGRESS — blocked on diagnostic log capture. No code changes are authorized until `[diag]` console output is reviewed.
+COMPLETE — fix implemented and verified via live browser test.
 
 ## Product Progress
-Auto Layout / Build AI Draft: 80% (IN PROGRESS, BUG-001 open). Hero Selection: 90% (PARTIAL, affected by BUG-001). All other tracked modules unchanged this build. Full tracker: AFFINE_SYNC/02_PRODUCT_STATUS.md.
+Auto Layout / Build AI Draft: 90% (DONE, no open bugs). Hero Selection: 100% (DONE). All other tracked modules unchanged this build. Full tracker: AFFINE_SYNC/02_PRODUCT_STATUS.md.
 
 ## Files Changed
-- OCF_START.html
-- js/app.js
+- AFFINE_SYNC/00_MPS_CONTENT_FACTORY_DASHBOARD.md
+- AFFINE_SYNC/01_CURRENT_BUILD.md
+- AFFINE_SYNC/02_PRODUCT_STATUS.md
+- AFFINE_SYNC/04_CHANGELOG.md
+- AFFINE_SYNC/05_TEST_RESULTS.md
+- AFFINE_SYNC/06_BUG_TRACKER.md
+- AFFINE_SYNC/07_NEXT_BUILD.md
+- AFFINE_SYNC/AFFINE_LATEST_UPDATE.md
 
 ## Test Results
-No automated test suite exists in this project. Manual verification only. See AFFINE_SYNC/05_TEST_RESULTS.md.
+No automated test suite exists in this project. Verified live in-browser (Chrome automation against a local HTTP server): hero geometry/identity correct on pages 1-3, multi-page navigation, save/reopen round-trip, and PNG export (incl. support slots) all PASS. See AFFINE_SYNC/05_TEST_RESULTS.md.
 
 ## Bugs
-- BUG-001 (OPEN, High): Hero photo mispositioned on page 3 of Build AI Draft output. See AFFINE_SYNC/06_BUG_TRACKER.md.
+- BUG-001 (FIXED): Hero photo mispositioned/misidentified across `buildAIDraft()` pages. See AFFINE_SYNC/06_BUG_TRACKER.md.
 
 ## Git Commit
-582428c4677334306111f1f4dd4231d64baa4117 - 2026-07-30 10:28:43 +0800
+9baa2bea8afc69efd345cd7de98e26fe489e2d76 - 2026-07-30 11:52:53 +0800
 
 ## Next Build
-BUILD-NEXT-hero-position-fix — implement the confirmed fix for BUG-001 once diagnostic logs are captured and analyzed. See AFFINE_SYNC/07_NEXT_BUILD.md.
+None approved yet — awaiting direction from the user. See AFFINE_SYNC/07_NEXT_BUILD.md.
