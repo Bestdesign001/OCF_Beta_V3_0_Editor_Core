@@ -15,7 +15,7 @@ Status legend: DONE (working as designed) · PARTIAL (working with known gaps) �
 | Facebook Caption | DONE | 100% | `generateFacebookCaption()` — professional paragraphs, no emojis, extracted fields only | — | None known | 57abfdc |
 | TikTok Caption | DONE | 100% | `generateTikTokCaption()` — shorter form + hashtags from extracted fields only | — | None known | 57abfdc |
 | ETV Export | NOT STARTED | 0% | — | No platform-specific export exists; not part of the approved spec seen so far | — | — |
-| Archive | NOT STARTED | 0% | — | No archival/history feature exists; projects are not persisted at all | — | — |
+| Archive | DONE | 90% | `ProjectStore` (IndexedDB: `projects` + `photoBlobs`, real Blobs not base64) — Save Project button, debounced auto-save with Saving/Saved/Save Failed status, Archive screen (Open/Duplicate/Rename/Delete), survives a real browser close/reopen (verified) | True virtualized lazy-loading for very large (300–500 photo) archives not built — current listing loads all project metadata + one small thumbnail each, which is cheap but not virtualized/paginated | None known | 9b01e32 |
 | Bug Tracker | N/A (process artifact) | — | Tracked in `06_BUG_TRACKER.md`, not in-app | — | — | — |
 
 **Export PNG**: DONE for hero, title, subtitle, gradient overlay, and support slots 1–4. PARTIAL in that title/subtitle are drawn using live DOM state rather than the Composition Model's frame (matches the deferred text-positioning gap noted under Auto Layout).

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-30 — 9b01e32
+**Build:** BUILD-2026.07.30-project-persistence (completed)
+**Summary:** Added Project Persistence / Archive — a user can close the browser or restart the machine, reopen OCF, and continue the same project without losing photos, event details, captions, pages, layouts, text edits, or photo assignments.
+
+- **Added:** `ProjectStore` module (IndexedDB `OCFArchiveDB`: `projects` + `photoBlobs` stores, real Blobs not base64) with `saveProject`/`getProject`/`listProjects`/`deleteProject`/`savePhotoBlob`/`getPhotoBlob`; `serializeProjectForSave()`/`saveProjectNow()`/`scheduleAutoSave()` (debounced autosave) with a Saving/Saved/Save Failed status indicator; Archive screen (`openArchivedProject`/`duplicateArchivedProject`/`renameArchivedProject`/`deleteArchivedProject`/`renderArchiveList`); Save Project button.
+- **Changed:** Autosave hooks wired into `updateText`, `updateEventInfoField`, `markCaptionEdited`, `applyProps`, `setHero`, the global mouseup handler, and photo upload. `CLAUDE.md` documents the `ProjectStore` boundary (all IndexedDB access must go through it).
+- **Fixed:** A handle-wiping bug in `Workspace.loadFactory()`.
+- **Removed:** Nothing.
+- **Files changed:** `OCF_START.html`, `CLAUDE.md`
+- **Git commit:** `9b01e32a19e5899b68f23a5ee9215cd8f2a71199`
+- **Verification:** Live browser test (Chrome automation, local HTTP server), two independent full real-browser-reload cycles, real `ProjectStore`/Archive UI round-trip. See `05_TEST_RESULTS.md`.
+
 ## 2026-07-30 — 57abfdc
 **Build:** BUILD-2026.07.30-automation-pipeline (completed)
 **Summary:** Fixed BUG-002 — implemented the locked automation pipeline (automatic text extraction, hero/photo distribution, content-driven multi-page generation, Facebook/TikTok captions, Export All Pages) that a real-user test found largely missing, and fixed two further defects the new functionality exposed.

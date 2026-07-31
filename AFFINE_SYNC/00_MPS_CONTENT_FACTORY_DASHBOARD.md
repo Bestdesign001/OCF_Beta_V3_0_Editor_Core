@@ -4,9 +4,9 @@
 |---|---|
 | Product name | MPS Content Factory (codebase: OCF Beta V3.0 Editor Core) |
 | Current version | Beta V3.0 |
-| Current build | 57abfdc — Fix BUG-002: implement locked automation pipeline (extraction/distribution/pages/captions) |
-| Overall status | IN DEVELOPMENT — BUG-001 and BUG-002 resolved; full one-click automation acceptance flow passes |
-| Current workflow stage | Phase 2.3 (BUG-001 and BUG-002 fixed and verified) |
+| Current build | 9b01e32 — Project Persistence / Archive: save/reopen a project across a real browser restart |
+| Overall status | IN DEVELOPMENT — BUG-001 and BUG-002 resolved, automation pipeline complete, project persistence complete |
+| Current workflow stage | Phase 2.4 (Project Persistence / Archive complete and verified) |
 
 ## Modules completed
 - Dashboard / Factory selection (7 factories defined in `FactoryManager`)

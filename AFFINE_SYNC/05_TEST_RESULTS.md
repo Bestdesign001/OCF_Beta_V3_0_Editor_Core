@@ -36,3 +36,31 @@ Verified live with real uploaded photos (10 real PNG files via the actual `#phot
 | Delete Page | PASS | Verified via `window.confirm` override (real users see a normal native dialog; this only works around the automation tooling being unable to click a native dialog) |
 | Hero/support photo geometry (BUG-001 regression check) | PASS | All page hero geometries finite; no-hero pages correctly show the harmless default (no photo to fit) |
 | Console errors during full BUG-002 test run | PASS | None found |
+
+## Project Persistence / Archive (BUILD-2026.07.30-project-persistence)
+Verified live (Chrome automation against a local `python -m http.server`) using 4 synthetic solid-color PNG fixtures generated as test-only pixel data in the session scratchpad (no real MPS photos used, none altered). Two independent full real-browser-reload cycles were run (`navigate` to the same URL, which fully resets all in-memory JS state — confirmed each time by `photos.length===0` immediately after reload). All saved data was read back through the real `ProjectStore` (IndexedDB) API and the real Archive UI, not simulated. Test project was deleted from IndexedDB after verification to leave no residue.
+
+| Step | Result | Evidence |
+|---|---|---|
+| Upload Photos | PASS | 4 real files via `file_upload` to `#photoInput`; `photos.length===4` |
+| Choose Hero | PASS | `setHero(0)` → `heroIndex===0` |
+| Paste event text → automatic extraction | PASS | Labelled Malay text → `eventInfo` fields populated (Tarikh/Masa/Lokasi/Jabatan/Aktiviti/Keputusan/Penutup all matched; pre-existing gap noted below) |
+| Build AI Draft (multi-page) | PASS | 4 pages generated (Cover/Activity/Results/Closing), hero assigned to cover page |
+| Edit title/subtitle text | PASS | `titleInput`/`subtitleInput` → `getLayerText()` matched edited values |
+| Edit Facebook caption (manual override) | PASS | Appended marker text, `dataset.userEdited` set, survived save/reload |
+| Hero position (drag) | PASS | Real `mousedown`/`mousemove`/`mouseup` sequence → `heroLayer` style `left/top` changed from `0,0` to `-40px,-30px` |
+| Hero resize/scale (drag `.h-br` handle) | PASS | `heroLayer` style `width/height` changed from `420/356` to `445px/371px` |
+| Hero rotation (drag `.h-rot` handle) | PASS | `layerData` rotation set to `40`, `heroLayer` `style.transform==='rotate(40deg)'` |
+| Title layer position (drag) | PASS | Incidental real-drag also moved `titleLayer` (`-34px,-27px`) — confirms independent per-layer rects, not just hero |
+| Support-slot photo position (drag `support1Layer`) | PASS | `support1Layer` style `left/top` changed from `0,364` to `20px,374px` |
+| Save Project (`saveProjectNow()`) | PASS | `saveStatus` showed `Saved HH:MM:SS`; project + 4 photo Blobs written to `OCFArchiveDB` |
+| **Real browser reload #1** (`navigate` to same URL) | PASS | `photos.length===0` and `window` state cleared immediately after reload, confirming a true reset, not an in-page simulation |
+| Archive screen lists saved project after reload | PASS | `ProjectStore.listProjects()` and the real Archive UI both showed 1 project, 4 photos, 4 pages; thumbnail correctly rendered the rotated red hero photo |
+| Open Saved Project via real "Open" button click | PASS | Photos (all 4, correct names), hero index, all 4 pages, title/subtitle text, hero position/scale/rotation, title-layer position, support1 position, event info fields, and the manually-edited Facebook caption all matched the pre-reload snapshot exactly |
+| Multi-page navigation after reopen (`switchToPage` 0→1→2→3→0) | PASS | Correct title and `heroPhotoId` per page on every step |
+| Export Current Page (`exportPNG()`) | PASS | No exception; canvas produced with valid non-zero dimensions |
+| Export All Pages (`exportAllPages()`) | PASS | No exception across all 4 pages; original active page (0) correctly restored afterward |
+| **Real browser reload #2** (second independent cycle) | PASS | Reopened the same project again after a second full reload; photos, hero index, page count, title, subtitle, hero rotation, hero position, and the edited Facebook caption all still matched |
+| Console errors during full persistence test run | PASS | No exceptions thrown by any called function; no uncaught errors observed |
+
+**Known gap, not a defect (pre-existing, out of scope for this build):** `extractEventInfo()`'s unlabelled-text fallback misread a `Maklumat Untuk Umum:` (Public Information) labelled line as the page title/summary instead of `publicInfo`, leaving `publicInfo` empty for that input. This is the same class of labelled-extraction limitation already tracked in `07_NEXT_BUILD.md`; it does not affect persistence (the field round-tripped correctly empty on save/reload) and was not touched, per the instruction not to modify unrelated modules.
