@@ -8,6 +8,8 @@
 .status{background:#ecfdf5;border:1px solid #86efac;color:#166534;border-radius:14px;padding:12px 16px;font-weight:900}
 .grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.4fr .9fr;gap:18px}.card{background:white;border:1px solid #d9e1ec;border-radius:18px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.08)}
 .panel{border:1px solid #d9e1ec;border-radius:14px;padding:12px;background:#f8fafc;margin:10px 0}.factoryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.archiveCard{display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;background:white;border:1px solid #d9e1ec;border-radius:14px;padding:12px;margin:0 0 10px;box-shadow:0 4px 12px rgba(0,0,0,.05)}.archiveThumb{width:90px;height:90px;border-radius:10px;background-size:cover;background-position:center;background-color:#f1f5f9}.archiveInfo b{font-size:15px}.archiveActions{display:flex;flex-direction:column;gap:6px}
+#saveStatus{color:#64748b;font-size:12px;margin-right:8px;font-weight:700}
 .factory{border:1px solid #d9e1ec;border-radius:14px;padding:14px;background:#f8fafc;cursor:pointer}.factory:hover{border-color:#D4AF37;box-shadow:0 8px 18px rgba(0,0,0,.08)}.factory b{font-size:20px}.small{font-size:12px;color:#64748b;line-height:1.4}
 .badge{display:inline-block;background:#ecfdf5;color:#166534;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.projectRow{border:1px solid #d9e1ec;border-radius:14px;padding:12px;background:#f8fafc;display:flex;justify-content:space-between;margin:10px 0}
 .workspaceTop{height:72px;background:white;border-bottom:1px solid #d9e1ec;display:flex;align-items:center;justify-content:space-between;padding:0 18px}.workspaceTop b{font-size:20px}.workspaceTop span{display:block;color:#64748b;font-size:12px}
@@ -40,10 +42,11 @@
 .slotLayer{background:linear-gradient(135deg,#c7dcf8,#f8fafc);overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#94a3b8}
 .slotImg{position:absolute;left:0;top:0;display:none;cursor:move;user-select:none}
 </style></head><body>
-<div class="top"><b id="topTitle">OCF Beta V3.0 Editor Core</b><div><button class="btn light" onclick="backDashboard()">Dashboard</button><button class="btn gold" onclick="newProject()">New Project</button></div></div>
+<div class="top"><b id="topTitle">OCF Beta V3.0 Editor Core</b><div><button class="btn light" onclick="backDashboard()">Dashboard</button><button class="btn light" onclick="openArchiveScreen()">Archive</button><button class="btn gold" onclick="newProject()">New Project</button></div></div>
 <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handlePhotos(event)">
-<main id="dashboardScreen" class="screen"><section class="header"><div><h1>QueenRay Official Factory Dashboard</h1><p>Editor Core connects Photo Queue, Canvas, Layers, Transform and Export.</p></div><div class="status">SYSTEM STATUS: PASS</div></section><section class="grid"><div class="card" id="factoryOverviewPanel"><h2>Factory Overview</h2><div id="factoryGrid" class="factoryGrid"></div></div><div class="card"><h2>System Status</h2><div class="panel">Foundation: <b id="foundationStatus">CHECKING</b></div><div class="panel">CSS Loaded: <b id="cssStatus">CHECKING</b></div><div class="panel">JavaScript Loaded: <b id="jsStatus">CHECKING</b></div><div class="panel">Screen Router: <b id="routerStatus">CHECKING</b></div><div class="panel">Official Locked Mode: <b>ON</b></div><h2>Recent Projects</h2><div class="projectRow"><div><b>No saved projects yet</b><div class="small">Projects aren't saved between sessions in this beta</div></div><button class="btn light" disabled title="No saved projects yet">Open</button></div></div></section></main>
-<main id="workspaceScreen" class="screen"><div class="workspaceTop"><div><b id="activeFactoryName">Greeting Factory</b><span id="activeFactoryDesc">Official greeting poster workflow</span></div><div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button><button class="btn gold" onclick="exportPNG()">Export PNG</button></div></div><div class="workflowTop"><span onclick="menuUploadPhotos()">Upload Photos</span><span onclick="menuPhotoQueue()">Photo Queue</span><span onclick="menuChooseHero()">Choose Hero</span><span onclick="menuCanvas()">Canvas</span><span onclick="menuTransform()">Transform</span><span onclick="menuLayers()">Layers</span><span onclick="menuExport()">Export</span></div>
+<main id="dashboardScreen" class="screen"><section class="header"><div><h1>QueenRay Official Factory Dashboard</h1><p>Editor Core connects Photo Queue, Canvas, Layers, Transform and Export.</p></div><div class="status">SYSTEM STATUS: PASS</div></section><section class="grid"><div class="card" id="factoryOverviewPanel"><h2>Factory Overview</h2><div id="factoryGrid" class="factoryGrid"></div></div><div class="card"><h2>System Status</h2><div class="panel">Foundation: <b id="foundationStatus">CHECKING</b></div><div class="panel">CSS Loaded: <b id="cssStatus">CHECKING</b></div><div class="panel">JavaScript Loaded: <b id="jsStatus">CHECKING</b></div><div class="panel">Screen Router: <b id="routerStatus">CHECKING</b></div><div class="panel">Official Locked Mode: <b>ON</b></div><h2>Recent Projects</h2><div class="projectRow"><div><b>Saved projects</b><div class="small">Projects are saved to this browser. Open the Archive to continue one.</div></div><button class="btn light" onclick="openArchiveScreen()">View Archive</button></div></div></section></main>
+<main id="archiveScreen" class="screen"><section class="header"><div><h1>Project Archive</h1><p>Saved projects on this browser. Open one to continue exactly where you left off.</p></div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button></section><section style="max-width:1180px;margin:0 auto"><div id="archiveList"></div></section></main>
+<main id="workspaceScreen" class="screen"><div class="workspaceTop"><div><b id="activeFactoryName">Greeting Factory</b><span id="activeFactoryDesc">Official greeting poster workflow</span></div><div><button class="btn light" onclick="backDashboard()">← Back to Dashboard</button><span id="saveStatus"></span><button class="btn light" onclick="saveProjectNow()">Save Project</button><button class="btn gold" onclick="exportPNG()">Export PNG</button></div></div><div class="workflowTop"><span onclick="menuUploadPhotos()">Upload Photos</span><span onclick="menuPhotoQueue()">Photo Queue</span><span onclick="menuChooseHero()">Choose Hero</span><span onclick="menuCanvas()">Canvas</span><span onclick="menuTransform()">Transform</span><span onclick="menuLayers()">Layers</span><span onclick="menuExport()">Export</span></div>
 <div class="workgrid"><aside class="left"><h3>Workflow</h3><div class="step">Dashboard → Factory → Workspace</div><div class="step">Upload Photos → Photo Queue</div><div class="step">Choose Hero → Canvas</div><div class="step">Object Transform → Layer Engine</div><div class="step">Export PNG</div><h3 id="uploadHeading">Upload Photos</h3><button class="btn gold" onclick="uploadPhotos()">Upload Photos</button><div id="dropZone" class="dropZone">Drag & Drop JPG / PNG / WEBP here</div><div class="small" id="photoCount">0 photos</div><h3 id="pasteHeading">Paste Text</h3><textarea id="pasteTextInput" placeholder="Paste WhatsApp or other text here" oninput="capturePastedText()"></textarea><div id="pasteDetected" class="small"></div><h3 id="eventInfoHeading">Event Details (Auto-Extracted)</h3><div class="panel propGrid"><label>Date<input id="eventDateInput" oninput="updateEventInfoField('date',this.value)"></label><label>Time<input id="eventTimeInput" oninput="updateEventInfoField('time',this.value)"></label><label>Location<input id="eventLocationInput" oninput="updateEventInfoField('location',this.value)"></label><label>Department<input id="eventDepartmentInput" oninput="updateEventInfoField('department',this.value)"></label></div><label>Activity<textarea id="eventActivityInput" oninput="updateEventInfoField('activity',this.value)"></textarea></label><label>Result<textarea id="eventResultInput" oninput="updateEventInfoField('result',this.value)"></textarea></label><label>Public Information<textarea id="eventPublicInfoInput" oninput="updateEventInfoField('publicInfo',this.value)"></textarea></label><label>Closing Message<textarea id="eventClosingInput" oninput="updateEventInfoField('closing',this.value)"></textarea></label><h3 id="captionsHeading">Facebook Caption</h3><textarea id="facebookCaptionOutput" oninput="markCaptionEdited(this)"></textarea><h3>TikTok Caption</h3><textarea id="tiktokCaptionOutput" oninput="markCaptionEdited(this)"></textarea><h3 id="queueHeading">Photo Queue</h3><div id="queueHint" class="queueHint"></div><div id="photoQueue" class="queue"></div><h3 id="heroAnalysisHeading">Hero Analysis</h3><div id="heroAnalysisPanel" class="small">Upload photos to see analysis.</div><div id="buildDraftPanel" class="small">Upload photos to build a draft.</div><h3 id="layersHeading">Layers</h3><div id="layersList"></div></aside>
 <aside class="pagePanel"><h3 id="pagesHeading">Pages</h3><div id="pageList"></div><button class="btn gold" onclick="addPage()">Add Page</button><button class="btn light" onclick="duplicatePage()">Duplicate Page</button><button class="btn red" id="deletePageBtn" onclick="deletePage(project.activePageIndex)">Delete Page</button><button class="btn light" onclick="prevPage()">◀ Prev Page</button><button class="btn light" onclick="nextPage()">Next Page ▶</button></aside>
 <section class="center" id="canvasSection"><div id="canvasWrap" class="canvasWrap"><div class="canvas" id="canvas"><div id="heroLayer" class="layerObj" style="z-index:1" onmousedown="heroPointerDown(event)" ondblclick="replaceHeroPhoto()"><span class="placeholder">Hero Photo Area</span><img id="heroImg" draggable="false"><div class="handle h-br" onmousedown="resizePointerDown(event)"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support1Layer" class="layerObj slotLayer hidden" style="z-index:2" onmousedown="objectDown(event,'support1Layer')"><span class="placeholder">Photo</span><img id="support1Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support2Layer" class="layerObj slotLayer hidden" style="z-index:3" onmousedown="objectDown(event,'support2Layer')"><span class="placeholder">Photo</span><img id="support2Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support3Layer" class="layerObj slotLayer hidden" style="z-index:4" onmousedown="objectDown(event,'support3Layer')"><span class="placeholder">Photo</span><img id="support3Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="support4Layer" class="layerObj slotLayer hidden" style="z-index:5" onmousedown="objectDown(event,'support4Layer')"><span class="placeholder">Photo</span><img id="support4Img" class="slotImg" draggable="false"><div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div class="grad" style="z-index:7"></div><div id="titleLayer" class="layerObj" style="z-index:10" onmousedown="objectDown(event,'titleLayer')" ondblclick="editTextLayer('titleLayer')">OFFICIAL GREETING POSTER<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="subtitleLayer" class="layerObj" style="z-index:11" onmousedown="objectDown(event,'subtitleLayer')" ondblclick="editTextLayer('subtitleLayer')">Official Locked Mode · Auto Layout Preview<div class="handle h-br" onmousedown="handleDown(event,'resize')"></div><div class="handle h-rot" onmousedown="handleDown(event,'rotate')"></div></div><div id="guideV" class="guide guideV"></div><div id="guideH" class="guide guideH"></div></div></div></section>
@@ -53,11 +56,47 @@
 <h3>Properties</h3><label>Rename Layer</label><input id="renameLayerInput"><button class="btn gold" onclick="renameLayer()">Rename</button><div class="panel"><label>Title</label><textarea id="titleInput" oninput="updateText()">OFFICIAL GREETING POSTER</textarea><label>Subtitle</label><textarea id="subtitleInput" oninput="updateText()">Official Locked Mode · Greeting Classic</textarea></div><h3>Zoom</h3><button class="btn light" onclick="setZoom(50)">50%</button><button class="btn light" onclick="setZoom(75)">75%</button><button class="btn light" onclick="setZoom(100)">100%</button><h3 id="exportHeading">Export</h3><button class="btn gold" onclick="exportPNG()">Export PNG</button><button class="btn light" onclick="exportAllPages()">Export All Pages</button><h3>Official Locked Mode</h3><div class="panel lockList"><label><input type="checkbox" checked disabled> Photo Lock</label><label><input type="checkbox" checked disabled> Logo Lock</label><label><input type="checkbox" checked disabled> Face Lock</label><label><input type="checkbox" checked disabled> Original Photo Mode</label></div></aside>
 </div><div class="statusBar">Canvas: <b id="sbCanvas">1080 × 1920</b> Zoom: <b id="sbZoom">100%</b> Selected: <b id="sbSelected">None</b> Layers: <b id="sbLayers">0</b> Photos: <b id="sbPhotos">0</b></div></main>
 <script>
-const ScreenRouter={current:null,screens:{},init(){this.screens={dashboard:document.getElementById('dashboardScreen'),workspace:document.getElementById('workspaceScreen')};this.showScreen('dashboard')},showScreen(name){Object.keys(this.screens).forEach(k=>{const s=this.screens[k];s.classList.toggle('active',k===name);s.setAttribute('aria-hidden',k===name?'false':'true')});this.current=name;updateStatusBar()}};
+const ScreenRouter={current:null,screens:{},init(){this.screens={dashboard:document.getElementById('dashboardScreen'),workspace:document.getElementById('workspaceScreen'),archive:document.getElementById('archiveScreen')};this.showScreen('dashboard')},showScreen(name){Object.keys(this.screens).forEach(k=>{const s=this.screens[k];s.classList.toggle('active',k===name);s.setAttribute('aria-hidden',k===name?'false':'true')});this.current=name;updateStatusBar()}};
 function showScreen(name){ScreenRouter.showScreen(name)}
 </script><script>
 const FactoryManager={factories:[['🎉','Greeting Factory','Official greeting posters.','OFFICIAL GREETING POSTER','Greeting Classic'],['🐶','Stray Dog Factory','Operation workflow.','OPERASI KAWALAN ANJING LIAR','Operation 5 Pages'],['🌳','Tree Cutting Factory','Before / action / after.','KERJA PEMOTONGAN POKOK','Before Action After'],['🏢','Building Inspection Factory','Inspection summary workflow.','PEMERIKSAAN BANGUNAN','Inspection Report'],['📅','Event Factory','Event highlight workflow.','SOROTAN PROGRAM RASMI','Event Highlight'],['📚','Album Factory','Multi-page official album.','ALBUM RASMI','Album Layout'],['🪧','Billboard Factory','Screen and billboard output.','PAPARAN RASMI','Billboard 4:3 / 16:9']],active:null,render(){factoryGrid.innerHTML='';this.factories.forEach(f=>{const d=document.createElement('div');d.className='factory';d.innerHTML=`<b>${f[0]} ${f[1]}</b><div class="small">${f[2]}</div><br><span class="badge">Official Locked Mode</span><br><br><button class="btn gold" type="button">OPEN</button>`;d.onclick=()=>this.open(f[1]);d.querySelector('button').onclick=e=>{e.preventDefault();e.stopPropagation();this.open(f[1])};factoryGrid.appendChild(d)})},open(name){this.active=this.factories.find(f=>f[1]===name)||this.factories[0];Workspace.loadFactory(this.active);ScreenRouter.showScreen('workspace')}};
 </script><script>
+/* ---- ProjectStore: IndexedDB-backed persistence. Swappable interface (init/saveProject/getProject/
+   listProjects/deleteProject/savePhotoBlob/getPhotoBlob/deletePhotoBlob) so a future server-backed store
+   (e.g. cPanel + MySQL) can replace this without changing any calling code. Project records hold plain
+   state only (no image bytes); uploaded photo data lives in photoBlobs as real Blobs - avoids base64
+   bloat and localStorage's small quota for large multi-photo projects. ---- */
+const ProjectStore=(function(){
+ const DB_NAME='OCFArchiveDB',DB_VERSION=1;
+ let dbPromise=null;
+ function open(){
+  if(dbPromise)return dbPromise;
+  dbPromise=new Promise((resolve,reject)=>{
+   const req=indexedDB.open(DB_NAME,DB_VERSION);
+   req.onupgradeneeded=()=>{
+    const db=req.result;
+    if(!db.objectStoreNames.contains('projects'))db.createObjectStore('projects',{keyPath:'id'});
+    if(!db.objectStoreNames.contains('photoBlobs'))db.createObjectStore('photoBlobs',{keyPath:'photoId'})
+   };
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>reject(req.error)
+  });
+  return dbPromise
+ }
+ async function store(name,mode){const db=await open();return db.transaction(name,mode).objectStore(name)}
+ function wrap(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+ return{
+  async saveProject(record){const s=await store('projects','readwrite');return wrap(s.put(record))},
+  async getProject(id){const s=await store('projects','readonly');const r=await wrap(s.get(id));return r||null},
+  async listProjects(){const s=await store('projects','readonly');const r=await wrap(s.getAll());return r||[]},
+  async deleteProject(id){const s=await store('projects','readwrite');return wrap(s.delete(id))},
+  async savePhotoBlob(photoId,blob){const s=await store('photoBlobs','readwrite');return wrap(s.put({photoId,blob}))},
+  async getPhotoBlob(photoId){const s=await store('photoBlobs','readonly');const r=await wrap(s.get(photoId));return r?r.blob:null},
+  async deletePhotoBlob(photoId){const s=await store('photoBlobs','readwrite');return wrap(s.delete(photoId))}
+ }
+})();
+function generateProjectId(){return 'proj_'+Date.now()+'_'+Math.random().toString(36).slice(2,9)}
+
 let photos=[],heroIndex=null,hero={x:0,y:0,w:420,h:522,src:null};
 let selectedLayers=['heroLayer'], dragMode=null, startX=0,startY=0,startRect=null, zoom=100;
 let replaceMode=false;
@@ -88,10 +127,12 @@ const Workspace={
  loadFactory(f){
   topTitle.textContent='OCF Beta V3.0 · '+f[1];
   activeFactoryName.textContent=f[0]+' '+f[1]; activeFactoryDesc.textContent=f[2];
-  titleLayer.textContent=f[3]; subtitleLayer.textContent='Official Locked Mode · '+f[4];
+  setLayerText('titleLayer',f[3]); setLayerText('subtitleLayer','Official Locked Mode · '+f[4]);
   titleInput.value=f[3]; subtitleInput.value='Official Locked Mode · '+f[4];
   this.resetPhoto(); renderQueue(); updateHero(); selectLayer('heroLayer',false); renderLayers(); syncProps(); updateStatusBar();
+  project.id=generateProjectId(); project.name=f[1]; project.createdAt=new Date().toISOString(); project.updatedAt=project.createdAt; project.status='draft';
   project.pages=[serializeActivePage()]; project.activePageIndex=0; renderPageList();
+  setSaveStatus('');
  },
  resetPhoto(){
   photos=[];heroIndex=null;
@@ -168,7 +209,8 @@ function addPhotoFiles(files){
   r.onload=ev=>{
    photos[idx].src=ev.target.result;
    measurePhotoDimensions(photos[idx]);
-   renderQueue();updateStatusBar();autoLayout()
+   renderQueue();updateStatusBar();autoLayout();
+   scheduleAutoSave()
   };
   r.readAsDataURL(file)
  })
@@ -200,7 +242,7 @@ function renderQueue(){
  });
  updateQueueStatus()
 }
-function setHero(i){if(!photos[i]||!photos[i].src)return;heroIndex=i;loadHero(photos[i].src);renderQueue();updateStatusBar()}
+function setHero(i){if(!photos[i]||!photos[i].src)return;heroIndex=i;loadHero(photos[i].src);renderQueue();updateStatusBar();scheduleAutoSave()}
 function renamePhoto(i){const n=prompt('Rename photo:',photos[i].name);if(n&&n.trim()){photos[i].name=n.trim();renderQueue()}}
 function deletePhoto(i){
  const wasHero=(heroIndex===i);
@@ -587,7 +629,8 @@ function applyProps(){
  l.rotation=rot;l.opacity=op/100;
  getEl(l.id).style.transform=`rotate(${rot}deg)`;
  getEl(l.id).style.opacity=l.opacity;
- syncProps();updateStatusBar()
+ syncProps();updateStatusBar();
+ scheduleAutoSave()
 }
 
 function blurActiveField(){const ae=document.activeElement;if(ae&&ae!==document.body&&typeof ae.blur==='function')ae.blur()}
@@ -603,7 +646,7 @@ document.addEventListener('mousemove',e=>{
  else if(dragMode==='rotate'){l.rotation=normalizeRotation(dx);getEl(id).style.transform=`rotate(${l.rotation}deg)`;propRot.value=l.rotation;return}
  setRect(id,r);syncProps();updateStatusBar()
 })
-document.addEventListener('mouseup',()=>{dragMode=null;guideV.style.display='none';guideH.style.display='none'})
+document.addEventListener('mouseup',()=>{const wasDragging=dragMode!=null;dragMode=null;guideV.style.display='none';guideH.style.display='none';if(wasDragging)scheduleAutoSave()})
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'){
   const ae=document.activeElement;
@@ -645,7 +688,8 @@ function updateText(){
  setLayerText('subtitleLayer',subtitleInput.value);
  eventInfo.title=titleInput.value;
  eventInfo.subtitle=subtitleInput.value;
- regenerateCaptions()
+ regenerateCaptions();
+ scheduleAutoSave()
 }
 function capturePastedText(){pastedText=pasteTextInput.value;parsePastedText()}
 
@@ -705,7 +749,7 @@ function syncEventInfoInputs(){
  const map={eventDateInput:'date',eventTimeInput:'time',eventLocationInput:'location',eventDepartmentInput:'department',eventActivityInput:'activity',eventResultInput:'result',eventPublicInfoInput:'publicInfo',eventClosingInput:'closing'};
  for(const id in map){const el=getEl(id);if(el)el.value=eventInfo[map[id]]||''}
 }
-function updateEventInfoField(field,value){eventInfo[field]=value;regenerateCaptions()}
+function updateEventInfoField(field,value){eventInfo[field]=value;regenerateCaptions();scheduleAutoSave()}
 
 /* ---- Caption generation: official tone, paragraphs, no emojis, uses only extracted/edited eventInfo fields - never invents facts not present in eventInfo. Regenerated whenever eventInfo changes, unless the user has manually edited a caption (tracked via dataset.userEdited). ---- */
 function generateFacebookCaption(info){
@@ -735,7 +779,7 @@ function regenerateCaptions(){
  if(fb&&!fb.dataset.userEdited)fb.value=generateFacebookCaption(eventInfo);
  if(tk&&!tk.dataset.userEdited)tk.value=generateTikTokCaption(eventInfo)
 }
-function markCaptionEdited(el){el.dataset.userEdited='1'}
+function markCaptionEdited(el){el.dataset.userEdited='1';scheduleAutoSave()}
 
 /* ---- Hero Analysis: display-only scoring, never assigns Hero. FACE_API_AVAILABLE and HERO_SCORE_MAX are fixed once per session so every photo in every run shares the same ceiling. ---- */
 const FACE_API_AVAILABLE=(typeof window.FaceDetector==='function');
@@ -972,7 +1016,7 @@ function buildAIDraft(){
 }
 
 /* ---- Page model: plain serializable data only (numbers/strings/booleans/plain objects). Never stores HTMLElement/Image/Canvas references or event listeners. Photos are referenced by stable photo.id only; src is resolved from photos[] at load time. ---- */
-const project={pages:[],activePageIndex:0};
+const project={pages:[],activePageIndex:0,id:null,name:'',createdAt:null,updatedAt:null,status:'draft'};
 
 function serializeActivePage(){
  const heroPhoto=(heroIndex!=null&&photos[heroIndex])?photos[heroIndex]:null;
@@ -1064,6 +1108,152 @@ function loadPageState(pageIndex){
  updateStatusBar();
  renderPageList()
 }
+
+/* ---- Project Persistence / Archive (BUILD-2026.07.30-project-persistence). Saves the full editor
+   state (photos as real Blobs + all serializable project data) to IndexedDB so a project survives
+   closing the browser or restarting the machine, and can be reopened later exactly as left. ---- */
+function srcToBlob(src){return fetch(src).then(r=>r.blob())}
+function buildProjectThumbnail(){
+ try{
+  const full=renderCurrentPageToCanvas();
+  const THUMB_W=160,THUMB_H=Math.max(1,Math.round(THUMB_W*full.height/full.width));
+  const t=document.createElement('canvas');
+  t.width=THUMB_W;t.height=THUMB_H;
+  t.getContext('2d').drawImage(full,0,0,THUMB_W,THUMB_H);
+  return t.toDataURL('image/jpeg',0.6)
+ }catch(e){return null}
+}
+function setSaveStatus(text){const el=getEl('saveStatus');if(el)el.textContent=text}
+let isSaving=false,autoSaveTimer=null;
+async function serializeProjectForSave(){
+ saveActivePageState();
+ return{
+  id:project.id,
+  name:project.name||(FactoryManager.active?FactoryManager.active[1]:'Untitled Project'),
+  createdAt:project.createdAt||new Date().toISOString(),
+  updatedAt:new Date().toISOString(),
+  status:'saved',
+  factory:FactoryManager.active?FactoryManager.active[1]:null,
+  photoRefs:photos.map(p=>({id:p.id,name:p.name,width:p.width,height:p.height})),
+  heroIndex,
+  pages:project.pages,
+  activePageIndex:project.activePageIndex,
+  eventInfo,
+  facebookCaption:getEl('facebookCaptionOutput')?getEl('facebookCaptionOutput').value:'',
+  tiktokCaption:getEl('tiktokCaptionOutput')?getEl('tiktokCaptionOutput').value:'',
+  thumbnail:buildProjectThumbnail()
+ }
+}
+async function saveProjectNow(){
+ if(isSaving)return;
+ if(!FactoryManager.active)return;
+ isSaving=true;
+ setSaveStatus('Saving…');
+ try{
+  if(!project.id)project.id=generateProjectId();
+  for(const p of photos){
+   if(p.src&&!p._blobStored){
+    const blob=await srcToBlob(p.src);
+    await ProjectStore.savePhotoBlob(p.id,blob);
+    p._blobStored=true
+   }
+  }
+  const record=await serializeProjectForSave();
+  project.name=record.name;project.createdAt=record.createdAt;project.updatedAt=record.updatedAt;project.status='saved';
+  await ProjectStore.saveProject(record);
+  setSaveStatus('Saved '+new Date(record.updatedAt).toLocaleTimeString())
+ }catch(e){
+  setSaveStatus('Save Failed');
+  console.error('[ProjectStore] save failed',e)
+ }finally{
+  isSaving=false
+ }
+}
+function scheduleAutoSave(){
+ if(!FactoryManager.active)return;
+ if(autoSaveTimer)clearTimeout(autoSaveTimer);
+ setSaveStatus('Saving…');
+ autoSaveTimer=setTimeout(saveProjectNow,1500)
+}
+async function openArchivedProject(id){
+ let record;
+ try{record=await ProjectStore.getProject(id)}catch(e){alert('Could not open project: '+e.message);return}
+ if(!record){alert('Project not found.');return}
+ const factoryDef=FactoryManager.factories.find(f=>f[1]===record.factory)||FactoryManager.factories[0];
+ FactoryManager.active=factoryDef;
+ topTitle.textContent='OCF Beta V3.0 · '+factoryDef[1];
+ activeFactoryName.textContent=factoryDef[0]+' '+factoryDef[1];activeFactoryDesc.textContent=factoryDef[2];
+
+ photos.length=0;
+ for(const ref of (record.photoRefs||[])){
+  let src=null;
+  try{
+   const blob=await ProjectStore.getPhotoBlob(ref.id);
+   if(blob)src=URL.createObjectURL(blob)
+  }catch(e){console.error('[ProjectStore] could not load photo blob',ref.id,e)}
+  photos.push({id:ref.id,name:ref.name,src,width:ref.width,height:ref.height,_blobStored:true})
+ }
+ heroIndex=typeof record.heroIndex==='number'?record.heroIndex:null;
+ eventInfo=record.eventInfo||eventInfo;
+ project.id=record.id;project.name=record.name;project.createdAt=record.createdAt;project.updatedAt=record.updatedAt;project.status=record.status||'saved';
+ project.pages=record.pages||[];
+ project.activePageIndex=Math.min(record.activePageIndex||0,Math.max(0,(record.pages||[]).length-1));
+
+ ScreenRouter.showScreen('workspace');
+ renderQueue();
+ if(project.pages.length)loadPageState(project.activePageIndex);
+ syncEventInfoInputs();
+ const fb=getEl('facebookCaptionOutput'),tk=getEl('tiktokCaptionOutput');
+ if(fb){fb.value=record.facebookCaption||'';if(record.facebookCaption)fb.dataset.userEdited='1'}
+ if(tk){tk.value=record.tiktokCaption||'';if(record.tiktokCaption)tk.dataset.userEdited='1'}
+ if(photos.length)analyzeHeroCandidates();
+ setSaveStatus('Saved '+new Date(record.updatedAt).toLocaleTimeString());
+ updateStatusBar()
+}
+async function duplicateArchivedProject(id){
+ let record;
+ try{record=await ProjectStore.getProject(id)}catch(e){alert('Could not duplicate project: '+e.message);return}
+ if(!record)return;
+ const clone={...record,id:generateProjectId(),name:(record.name||'Untitled Project')+' (Copy)',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+ try{await ProjectStore.saveProject(clone)}catch(e){alert('Could not duplicate project: '+e.message);return}
+ renderArchiveList()
+}
+async function deleteArchivedProject(id){
+ if(!confirm('Delete this saved project? This cannot be undone.'))return;
+ try{await ProjectStore.deleteProject(id)}catch(e){alert('Could not delete project: '+e.message);return}
+ renderArchiveList()
+}
+async function renameArchivedProject(id){
+ let record;
+ try{record=await ProjectStore.getProject(id)}catch(e){alert('Could not rename project: '+e.message);return}
+ if(!record)return;
+ const name=prompt('Rename project:',record.name||'');
+ if(!name||!name.trim())return;
+ record.name=name.trim();record.updatedAt=new Date().toISOString();
+ try{await ProjectStore.saveProject(record)}catch(e){alert('Could not rename project: '+e.message);return}
+ renderArchiveList()
+}
+async function renderArchiveList(){
+ const el=getEl('archiveList');
+ if(!el)return;
+ el.innerHTML='<div class="small">Loading saved projects…</div>';
+ let list;
+ try{list=await ProjectStore.listProjects()}catch(e){el.innerHTML='<div class="small">Could not read saved projects: '+escapeHtml(e.message)+'</div>';return}
+ if(!list.length){el.innerHTML='<div class="small">No saved projects yet. Build a draft in the Workspace and click "Save Project".</div>';return}
+ list.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+ el.innerHTML=list.map(p=>`<div class="archiveCard"><div class="archiveThumb" style="${p.thumbnail?`background-image:url('${p.thumbnail}')`:''}"></div><div class="archiveInfo"><b>${escapeHtml(p.name||'Untitled Project')}</b><div class="small">Updated ${p.updatedAt?new Date(p.updatedAt).toLocaleString():'—'}</div><div class="small">${(p.photoRefs||[]).length} photo(s) · ${(p.pages||[]).length} page(s) · ${escapeHtml(p.status||'draft')}</div></div><div class="archiveActions"><button class="btn gold" data-action="open" data-id="${p.id}">Open</button><button class="btn light" data-action="duplicate" data-id="${p.id}">Duplicate</button><button class="btn light" data-action="rename" data-id="${p.id}">Rename</button><button class="btn red" data-action="delete" data-id="${p.id}">Delete</button></div></div>`).join('');
+ el.querySelectorAll('button[data-action]').forEach(btn=>{
+  btn.onclick=()=>{
+   const id=btn.dataset.id,action=btn.dataset.action;
+   if(action==='open')openArchivedProject(id);
+   else if(action==='duplicate')duplicateArchivedProject(id);
+   else if(action==='rename')renameArchivedProject(id);
+   else if(action==='delete')deleteArchivedProject(id)
+  }
+ })
+}
+function openArchiveScreen(){ScreenRouter.showScreen('archive');renderArchiveList()}
+
 function switchToPage(pageIndex){
  if(pageIndex<0||pageIndex>=project.pages.length)return;
  if(pageIndex===project.activePageIndex){loadPageState(pageIndex);return}

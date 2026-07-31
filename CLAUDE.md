@@ -18,3 +18,7 @@
 ## Entry point
 
 Open `OCF_START.html` directly in a browser - it is the current, self-contained application (see `AFFINE_SYNC/08_FILE_MAP.md` for why `index.html`/`js/*.js` is a separate, older copy).
+
+## Persistence
+
+Projects are saved to this browser's IndexedDB (`OCFArchiveDB` — `projects` + `photoBlobs` stores), not to a server. All calls go through the `ProjectStore` module (`saveProject`/`getProject`/`listProjects`/`deleteProject`/`savePhotoBlob`/`getPhotoBlob`) so a future server-backed store can replace it without touching editor code. Do not read/write IndexedDB directly from elsewhere in the editor — go through `ProjectStore`.
